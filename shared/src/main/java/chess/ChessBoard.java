@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.HashMap;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -8,7 +10,22 @@ package chess;
  */
 public class ChessBoard {
 
+    /* Things I need to do to make bishop test work
+    1 first create a chessboard with an 8X8 array
+    2 add the piece to the position given in the args
+    3 define the moves the bishop can make
+    4 return if it has valid moves based on the position
+
+     */
+
+    // create the board
+//    private final ChessPiece[][] board;
+    //arrays werent working, going to try a Hashmap (i need more practice anyways)
+
+    private HashMap<ChessPosition, ChessPiece> board;
+
     public ChessBoard() {
+        this.board = new HashMap<>();
         
     }
 
@@ -19,7 +36,14 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        board.put(position, piece);
+
+
+
+//        int row = position.getRow();
+//        int col = position.getColumn();
+//        board[row][col] = piece;
+
     }
 
     /**
@@ -30,7 +54,19 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece curr = board.get(position);
+        for (ChessPosition key : board.keySet()) {
+            if (position.getRow() == key.getRow() && position.getColumn() == key.getColumn()) {
+                curr = board.get(key);
+                break;
+            }
+        }
+        return curr;
+
+
+//        int row = position.getRow();
+//        int col = position.getColumn();
+//        return board[row][col];
     }
 
     /**
@@ -38,6 +74,13 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        //for the purposes of this section i think the chessboard reset should just clear it all
+        board.clear();
+
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                board[i][j] = null;
+//            }
+//        }
     }
 }
