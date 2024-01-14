@@ -10,21 +10,14 @@ import java.util.Objects;
  */
 public class ChessPosition {
 
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
 
     public ChessPosition(int row, int col) {
-        /* Things I need to do for this
-        1 need to validate if its a valid position
-        2 return the row/column if it is
-         */
-        //prolly gonna want a helper function to it
-        if (isValPos(row,col)) {
-            this.row = row;
-            this.col = col;
 
+        this.row = row;
+        this.col = col;
 
-        }
     }
 
     /**
@@ -42,11 +35,6 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
-    // helper funct for the valid case
-    private static boolean isValPos(int row, int col) {
-        return row > 1 && row < 8 && col > 1 && col <8;
-    }
-
 
     @Override
     public boolean equals(Object o) {

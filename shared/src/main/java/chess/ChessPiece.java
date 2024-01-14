@@ -11,9 +11,13 @@ import java.util.LinkedHashSet;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
+
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -32,14 +36,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return PieceType.BISHOP;
+        return type;
     }
 
     /**
@@ -80,10 +84,14 @@ public class ChessPiece {
                 }
                 // I need to now add the new position so that we can check for blank spots
                 ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                ChessPiece BlankSpaceCheck = board.getPiece(newPosition);
-                if (BlankSpaceCheck == null) {
+                ChessPiece SpaceCheck = board.getPiece(newPosition);
+                if (SpaceCheck == null) {
                     validMoves.add(new ChessMove(myPosition, newPosition, null));
                 } else {
+                    // now to implement capturing and being blocked by same color pieces;
+                    if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    }
                     break;
                 }
             }
