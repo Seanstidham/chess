@@ -63,37 +63,62 @@ public class ChessPiece {
         //maybe try setting it up as the only way to go for now
         //slack discussed HashSets, might be better for the valid moves
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
+        // okay now that Bishop works, going to try something and this is gonna be gross if this works
+        // oh no, it DOES work. guess its gonna be a ton of gross if statements
+        if (getPieceType() == PieceType.KING) {
 
-        int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+            int[][] directions ={{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
 
-        //now i need a way that all the possible moves are read
-        // lets try something a bit different and see if that works
-        for (int[] direction : directions) {
-            int newRow = myPosition.getRow();
-            int newCol = myPosition.getColumn();
-            int deltaRow = direction[0];
-            int deltaCol = direction[1];
+            for (int[] direction : directions) {
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+                int newRow = myPosition.getRow() + deltaRow;
+                int newCol = myPosition.getColumn() + deltaCol;
 
-            while (true) {
-                newRow += deltaRow;
-                newCol += deltaCol;
-
-                // gonna try to set up an if statement instead of a whole helper function
-                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
-                    break;
-                }
-                // I need to now add the new position so that we can check for blank spots
-                ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                ChessPiece SpaceCheck = board.getPiece(newPosition);
-                if (SpaceCheck == null) {
-                    validMoves.add(new ChessMove(myPosition, newPosition, null));
-                } else {
-                    // now to implement capturing and being blocked by same color pieces;
-                    if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    if (SpaceCheck == null || SpaceCheck.getTeamColor() != getTeamColor()) {
                         validMoves.add(new ChessMove(myPosition, newPosition, null));
                     }
-                    break;
                 }
+            }
+        }
+
+        if (getPieceType() == PieceType.BISHOP) {
+
+            int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+            //now i need a way that all the possible moves are read
+            // lets try something a bit different and see if that works
+            for (int[] direction : directions) {
+                int newRow = myPosition.getRow();
+                int newCol = myPosition.getColumn();
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+
+                while (true) {
+                    newRow += deltaRow;
+                    newCol += deltaCol;
+
+                    // gonna try to set up an if statement instead of a whole helper function
+                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                        break;
+                    }
+                    // I need to now add the new position so that we can check for blank spots
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    if (SpaceCheck == null) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    } else {
+                        // now to implement capturing and being blocked by same color pieces;
+                        if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                            validMoves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                        break;
+                    }
+                }
+
             }
 
         }
