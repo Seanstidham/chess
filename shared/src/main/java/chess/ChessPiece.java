@@ -63,6 +63,29 @@ public class ChessPiece {
         //maybe try setting it up as the only way to go for now
         //slack discussed HashSets, might be better for the valid moves
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
+
+        //if it ain't broke
+        if (getPieceType() == PieceType.KNIGHT) {
+
+            int[][] directions ={{-2,-1}, {-1,-2}, {1,-2}, {2,-1}, {-2,1}, {-1,2}, {1,2}, {2,1}};
+
+            for (int[] direction : directions) {
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+                int newRow = myPosition.getRow() + deltaRow;
+                int newCol = myPosition.getColumn()+ deltaCol;
+
+                if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    if (SpaceCheck == null || SpaceCheck.getTeamColor() != getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                }
+            }
+        }
+
+
         // okay now that Bishop works, going to try something and this is gonna be gross if this works
         // oh no, it DOES work. guess its gonna be a ton of gross if statements
         if (getPieceType() == PieceType.KING) {
