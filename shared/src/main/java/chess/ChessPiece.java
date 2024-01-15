@@ -64,10 +64,45 @@ public class ChessPiece {
         //slack discussed HashSets, might be better for the valid moves
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
 
+        //okay the tricky one being the pawn
+        if (getPieceType() == PieceType.PAWN){
+            //first thing is i gotta define the directions based off the color
+            int goForward = (getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+            //okay now i can write out directions
+            int[][] directions = {{goForward, 0}};
+
+            for (int[] direction : directions) {
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+                int newRow = myPosition.getRow() + deltaRow;
+                int newCol = myPosition.getColumn() + deltaCol;
+
+
+                if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    ChessPosition targetCheckRight = new ChessPosition(newRow, newCol + 1);
+                    ChessPiece Target1 = board.getPiece(targetCheckRight);
+                    ChessPosition targetCheckLeft = new ChessPosition(newRow, newCol - 1);
+                    ChessPiece Target2 = board.getPiece(targetCheckLeft);
+                    if (SpaceCheck == null) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    } else if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
+
+                            validMoves.add(new ChessMove(myPosition, targetCheckRight, null));
+
+                    } else if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
+                            validMoves.add(new ChessMove(myPosition, targetCheckLeft, null));
+                        }
+                    }
+                }
+            }
+
+
         //if it ain't broke
         if (getPieceType() == PieceType.KNIGHT) {
 
-            int[][] directions ={{-2,-1}, {-1,-2}, {1,-2}, {2,-1}, {-2,1}, {-1,2}, {1,2}, {2,1}};
+            int[][] directions = {{-2,-1}, {-1,-2}, {1,-2}, {2,-1}, {-2,1}, {-1,2}, {1,2}, {2,1}};
 
             for (int[] direction : directions) {
                 int deltaRow = direction[0];
