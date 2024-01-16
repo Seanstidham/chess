@@ -97,6 +97,7 @@ public class ChessPiece {
                 }
             }
 
+
         }
 
         //alright rook first then we'll do the queen
@@ -164,7 +165,7 @@ public class ChessPiece {
 //
 //                }
 
-                if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                if (newRow > 1 && newRow < 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newPosition = new ChessPosition(newRow, newCol);
                     ChessPiece SpaceCheck = board.getPiece(newPosition);
                     ChessPosition targetCheckRight = new ChessPosition(newRow, newCol + 1);
@@ -191,6 +192,53 @@ public class ChessPiece {
                     }
                     if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
                         validMoves.add(new ChessMove(myPosition, targetCheckLeft, null));
+                    }
+                }
+                //let me cook
+                if (newRow == 1 || newRow == 8){
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    ChessPosition targetCheckRight = new ChessPosition(newRow, newCol + 1);
+                    ChessPiece Target1 = board.getPiece(targetCheckRight);
+                    ChessPosition targetCheckLeft = new ChessPosition(newRow, newCol - 1);
+                    ChessPiece Target2 = board.getPiece(targetCheckLeft);
+                    if (SpaceCheck == null) {
+                        validMoves.add(new ChessMove(myPosition, newPosition,PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, newPosition,PieceType.KNIGHT));
+                        validMoves.add(new ChessMove(myPosition, newPosition,PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, newPosition,PieceType.BISHOP));
+                        //lets see if this works
+                    } else {
+                        if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
+
+                            validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.ROOK));
+                            validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.BISHOP));
+                        }
+                        if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
+                            validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.QUEEN));
+                            validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.KNIGHT));
+                            validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.ROOK));
+                            validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.BISHOP));
+                        }
+                        break;
+
+                    }
+                    if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
+
+                        validMoves.add(new ChessMove(myPosition,targetCheckRight,PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.KNIGHT));
+                        validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, targetCheckRight,PieceType.BISHOP));
+
+                    }
+                    if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.QUEEN));
+                        validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.KNIGHT));
+                        validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.ROOK));
+                        validMoves.add(new ChessMove(myPosition, targetCheckLeft,PieceType.BISHOP));
+                        //alright lets see if this horrendous thing works
                     }
                 }
             }
