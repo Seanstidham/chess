@@ -65,6 +65,40 @@ public class ChessPiece {
         //slack discussed HashSets, might be better for the valid moves
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
 
+        //alright queen time, then ill mess with Pawn promotion again
+        if (getPieceType() == PieceType.QUEEN) {
+
+            int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+            for (int[] direction : directions) {
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+                int newRow = myPosition.getRow();
+                int newCol = myPosition.getColumn();
+
+                while (true) {
+                    newRow += deltaRow;
+                    newCol += deltaCol;
+
+
+                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                        break;
+                    }
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    if (SpaceCheck == null) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    } else {
+                        if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                            validMoves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                        break;
+                    }
+                }
+            }
+
+        }
+
         //alright rook first then we'll do the queen
         if (getPieceType() == PieceType.ROOK) {
 
