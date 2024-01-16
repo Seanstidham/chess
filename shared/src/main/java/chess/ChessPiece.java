@@ -18,6 +18,7 @@ public class ChessPiece {
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
+
     }
 
     /**
@@ -64,19 +65,70 @@ public class ChessPiece {
         //slack discussed HashSets, might be better for the valid moves
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
 
-        //okay the tricky one being the pawn
-        if (getPieceType() == PieceType.PAWN){
-            //first thing is i gotta define the directions based off the color
-            int goForward = (getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
-            //okay now i can write out directions
-            int[][] directions = {{goForward, 0}};
+        //alright rook first then we'll do the queen
+        if (getPieceType() == PieceType.ROOK) {
+
+            int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
             for (int[] direction : directions) {
+                int deltaRow = direction[0];
+                int deltaCol = direction[1];
+                int newRow = myPosition.getRow();
+                int newCol = myPosition.getColumn();
+
+                while (true) {
+                    newRow += deltaRow;
+                    newCol += deltaCol;
+
+
+                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                        break;
+                    }
+                    ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                    ChessPiece SpaceCheck = board.getPiece(newPosition);
+                    if (SpaceCheck == null) {
+                        validMoves.add(new ChessMove(myPosition, newPosition, null));
+                    } else {
+                        if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                            validMoves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                        break;
+                    }
+
+
+                }
+            }
+        }
+
+        //okay the tricky one being the pawn
+        if (getPieceType() == PieceType.PAWN) {
+            //first thing is i gotta define the directions based off the color
+            int goForward = (getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+
+            int[][] directions;
+            //okay now i can write out directions
+            //maybe an if statement to figure out the intial 2 move
+            if (getTeamColor() == ChessGame.TeamColor.WHITE && myPosition.getRow() == 2) {
+                directions = new int[][]{{goForward, 0}, {goForward + 1, 0}};
+            } else if (getTeamColor() == ChessGame.TeamColor.BLACK && myPosition.getRow() == 7) {
+                directions = new int[][]{{goForward, 0}, {goForward - 1, 0}};
+            } else {
+                directions = new int[][]{{goForward, 0}};
+            }
+
+
+            for (int[] direction : directions) {
+
                 int deltaRow = direction[0];
                 int deltaCol = direction[1];
                 int newRow = myPosition.getRow() + deltaRow;
                 int newCol = myPosition.getColumn() + deltaCol;
 
+                //implementing promotion
+                // will come back to it, it hard af or im stupid af
+//                if (newRow == 8 || newRow == 1) {
+//
+//                }
 
                 if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newPosition = new ChessPosition(newRow, newCol);
@@ -87,28 +139,41 @@ public class ChessPiece {
                     ChessPiece Target2 = board.getPiece(targetCheckLeft);
                     if (SpaceCheck == null) {
                         validMoves.add(new ChessMove(myPosition, newPosition, null));
-                    } else if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
+                    } else {
+                        if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
 
                             validMoves.add(new ChessMove(myPosition, targetCheckRight, null));
-
-                    } else if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
+                        }
+                        if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
                             validMoves.add(new ChessMove(myPosition, targetCheckLeft, null));
                         }
+                        break;
+
+                    }
+                    if (Target1 != null && Target1.getTeamColor() != getTeamColor()) {
+
+                        validMoves.add(new ChessMove(myPosition, targetCheckRight, null));
+
+                    }
+                    if (Target2 != null && Target2.getTeamColor() != getTeamColor()) {
+                        validMoves.add(new ChessMove(myPosition, targetCheckLeft, null));
                     }
                 }
             }
+
+        }
 
 
         //if it ain't broke
         if (getPieceType() == PieceType.KNIGHT) {
 
-            int[][] directions = {{-2,-1}, {-1,-2}, {1,-2}, {2,-1}, {-2,1}, {-1,2}, {1,2}, {2,1}};
+            int[][] directions = {{-2, -1}, {-1, -2}, {1, -2}, {2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}};
 
             for (int[] direction : directions) {
                 int deltaRow = direction[0];
                 int deltaCol = direction[1];
                 int newRow = myPosition.getRow() + deltaRow;
-                int newCol = myPosition.getColumn()+ deltaCol;
+                int newCol = myPosition.getColumn() + deltaCol;
 
                 if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newPosition = new ChessPosition(newRow, newCol);
@@ -125,7 +190,7 @@ public class ChessPiece {
         // oh no, it DOES work. guess its gonna be a ton of gross if statements
         if (getPieceType() == PieceType.KING) {
 
-            int[][] directions ={{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
+            int[][] directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
             for (int[] direction : directions) {
                 int deltaRow = direction[0];
@@ -183,7 +248,6 @@ public class ChessPiece {
         return validMoves;
     }
 }
-
 
 
 
