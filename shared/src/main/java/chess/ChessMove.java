@@ -44,17 +44,27 @@ public class ChessMove {
        return promotionPiece;
     }
     // according to the internet, for the sets to be correct I need a proper equals and hashcode method
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
         return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promotionPiece == chessMove.promotionPiece;
     }
+
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (o == null || getClass() != o.getClass()) {
+//            return false;
+//        }
+//        ChessMove chessMove = (ChessMove) o;
+//        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promotionPiece == chessMove.promotionPiece;
+//    }
 
     @Override
     public int hashCode() {

@@ -56,13 +56,19 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        // so first we need to see if we can get the piece directly from the board
         ChessPiece curr = board.get(position);
+        //if that doesnt work you need to iterate over every key value within the Hashmap
         for (ChessPosition key : board.keySet()) {
+            //if the position row and column is the same as the key row and column
             if (position.getRow() == key.getRow() && position.getColumn() == key.getColumn()) {
+                //updates the curr value to the key found in the board
                 curr = board.get(key);
+                //no repeats with a hashmap so its good to break
                 break;
             }
         }
+        //return the curr value
         return curr;
 
 
@@ -132,20 +138,34 @@ public class ChessBoard {
 //        }
     }
     //ah yes my arch nemesis, the hash and equals override
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
         return Objects.equals(board, that.board);
     }
+
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (o == null || getClass() != o.getClass()) {
+//            return false;
+//        }
+//        ChessBoard that = (ChessBoard) o;
+//        return Objects.equals(board, that.board);
+//    }
 
     @Override
     public int hashCode() {
         return Objects.hash(board);
     }
+    //    @Override
+//    public int hashCode() {
+//        return Objects.hash(board);
+//    }
 }
