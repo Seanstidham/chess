@@ -111,7 +111,7 @@ public class ChessGame {
             throw new InvalidMoveException("Move Invalid");
         }
         //set the last_move
-        currPiece.sethasMoved();
+        currPiece.setMoved();
         last_move = move;
 
         // now update the team turn

@@ -53,7 +53,13 @@ public class ChessPiece {
     }
 
     //Implementing the has moved ones now
+    public boolean hasMoved() {
+        return hasMoved;
+    }
 
+    public void setMoved() {
+        hasMoved = true;
+    }
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
