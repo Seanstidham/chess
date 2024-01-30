@@ -69,15 +69,22 @@ public class ChessGame {
         }
         //so its going to be like validMoves in my ChessPiece file I think
         //need to import a linkedHashSet
+        Collection<ChessMove> everyMove = currPiece.pieceMoves(chessBoard, startPosition);
         Collection<ChessMove> validMoves = new LinkedHashSet<>();
         //wait hold up i need to implement the check and checkmate first
         //then I can take every move and then only take the ones that dont violate check or checkmate
         //aight let me test this theory
         //okay implemented check and checkmate, now I have something to filter every move through
-        Collection<ChessMove> everyMove = currPiece.pieceMoves(chessBoard, startPosition);
 
+        // so mr google is telling me that my logic sucks
+        /*
+        my current logic is only filtering the current piece, when what I actually need to do to simulate EVERY OTHER MOVE AND MAKE SURE THAT DOESNT RESULT IN YOUR OWN CHECK/CHECKMATE
+        I have only 1 idea for how to do this, being to write a movePiece function, then and undoMove function
+
+         */
         for (ChessMove move : everyMove) {
-
+            //wait I have a addPiece function maybe just adding a delete function would be easier
+            //id assume id have to add it to the Chessboard file
             if (!isInCheck(currPiece.getTeamColor())) {
                 validMoves.add(move);
             }

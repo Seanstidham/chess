@@ -137,6 +137,13 @@ public class ChessBoard {
 //            }
 //        }
     }
+    //gonna name my delete piece function something weird cause im starting to go insane
+    public void roofPiece(ChessPosition position, ChessPiece piece) {
+        board.remove(position, piece);
+    }
+    //think that should do it
+
+
     //ah yes my arch nemesis, the hash and equals override
 
     @Override
