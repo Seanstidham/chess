@@ -127,24 +127,37 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         // first get the position of the king
+        //this whole function isn't working, imma try something
+        //let me cook
         ChessPosition kingPos = null;
 
         for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++){
-                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row,col));
+            for (int col = 1; col < 9; col++) {
+                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row, col));
                 if (pieceCheck != null && pieceCheck.getTeamColor() == teamColor && pieceCheck.getPieceType() == ChessPiece.PieceType.KING) {
                     kingPos = new ChessPosition(row, col);
                 }
+            }
+        }
+        if (kingPos == null) {
+            return false;
+        }
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row, col));
                 if (pieceCheck != null && pieceCheck.getTeamColor() != teamColor) {
                     Collection<ChessMove> getMoves = pieceCheck.pieceMoves(chessBoard, new ChessPosition(row, col));
-                    if (getMoves != null && (getMoves.contains(new ChessMove(new ChessPosition(row,col), kingPos, null)) || getMoves.contains(new ChessMove(new ChessPosition(row,col), kingPos, ChessPiece.PieceType.QUEEN)))) {
+                    if (getMoves != null && (getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, null)) || getMoves.contains(new ChessMove(new ChessPosition(row, col), kingPos, ChessPiece.PieceType.QUEEN)))) {
                         return true;
                     }
                 }
             }
         }
+                // Okay NOW I think i figured it out
+
+
         return false;
-        //think i figured it out, but we'll see how it works cause my codes pretty gross
+
     }
 
     /**
