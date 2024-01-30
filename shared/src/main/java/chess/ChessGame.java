@@ -131,6 +131,8 @@ public class ChessGame {
         // and I need to check if its the correct turn
         //then at the end I need to update the last_move and update the team color
         ChessPiece currPiece = chessBoard.getPiece(move.getStartPosition());
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
 
         //okay should probably start with the team color check cause that would break a lot quicker than anything else
         if (currPiece.getTeamColor() != teamTurn) {
@@ -141,6 +143,15 @@ public class ChessGame {
         if (!validMoves.contains(move)) {
             throw new InvalidMoveException("Move Invalid");
         }
+        if (move.getPromotionPiece() == null) {
+            chessBoard.addPiece(end, currPiece);
+            chessBoard.roofPiece(start, currPiece);
+        }
+        else if (move.getPromotionPiece() == ChessPiece.PieceType.QUEEN || move.getPromotionPiece() == ChessPiece.PieceType.BISHOP || move.getPromotionPiece() == ChessPiece.PieceType.KNIGHT || move.getPromotionPiece() == ChessPiece.PieceType.ROOK) {
+            chessBoard.addPiece(end, new ChessPiece(currPiece.getTeamColor(), move.getPromotionPiece()));
+            chessBoard.roofPiece(start, currPiece);
+        }
+
         //set the last_move
         currPiece.setMoved();
         last_move = move;
