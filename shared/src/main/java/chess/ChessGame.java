@@ -182,7 +182,27 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //gonna be real idk how stalemate works, gonna look that up real quick
+        //okay mr google says its when the king isnt in check but you cant move without being put into check
+        //so first things first, cant be in check
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+        //now prolly need something like a full board iteration to scan all the moves
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                //literally just the same logic as checkmate pretty sure
+                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row, col));
+                if (pieceCheck != null && pieceCheck.getTeamColor() != teamColor) {
+                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
+                    if (getMoves != null && !getMoves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+            // think this should work, cause as long as get moves is something and contains something it should return false
+        }
+        return true;
     }
 
     /**
@@ -191,7 +211,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.chessBoard = board;
     }
 
     /**
@@ -200,6 +220,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return chessBoard;
     }
 }
