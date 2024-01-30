@@ -85,12 +85,36 @@ public class ChessGame {
         for (ChessMove move : everyMove) {
             //wait I have a addPiece function maybe just adding a delete function would be easier
             //id assume id have to add it to the Chessboard file
+            //okay lets hope im not wrong with that
+            //okay assuming that its a correct guess for it id need to init a start and an end
+            ChessPosition start = move.getStartPosition();
+            ChessPosition end = move.getEndPosition();
+            // i need to add a SpaceCheck that restores the piece on the end position
+            ChessPiece SpaceCheck = chessBoard.getPiece(end);
+
+            //now i gotta simulate the move maybe a move the pieces and then check if in check then move it all back prolly
+            // imma cook with that
+            chessBoard.addPiece(end, currPiece);
+            chessBoard.roofPiece(start, currPiece);
+
+
             if (!isInCheck(currPiece.getTeamColor())) {
                 validMoves.add(move);
             }
+
+            //now put everything back
+            chessBoard.addPiece(start, currPiece);
+            chessBoard.roofPiece(end, currPiece);
+
+            if (SpaceCheck != null) {
+                chessBoard.addPiece(end, SpaceCheck);
+            }
+
+
         }
         return validMoves;
-
+        //still breaking, porque?
+        // oh wait my code wouldnt bring a piece that was on the end space back, it would just delete them on the whole board
 
     }
 
