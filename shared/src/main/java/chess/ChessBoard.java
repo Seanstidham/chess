@@ -131,11 +131,7 @@ public class ChessBoard {
 
 
 
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                board[i][j] = null;
-//            }
-//        }
+
     }
     //gonna name my delete piece function something weird cause im starting to go insane
     public void roofPiece(ChessPosition position, ChessPiece piece) {
@@ -144,7 +140,7 @@ public class ChessBoard {
     //think that should do it
 
 
-    //ah yes my arch nemesis, the hash and equals override
+
 
     @Override
     public boolean equals(Object o) {
@@ -155,24 +151,10 @@ public class ChessBoard {
     }
 
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//        ChessBoard that = (ChessBoard) o;
-//        return Objects.equals(board, that.board);
-//    }
 
     @Override
     public int hashCode() {
         return Objects.hash(board);
     }
-    //    @Override
-//    public int hashCode() {
-//        return Objects.hash(board);
-//    }
+
 }

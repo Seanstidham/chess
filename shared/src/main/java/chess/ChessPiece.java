@@ -351,27 +351,13 @@ public class ChessPiece {
         return pieceColor == that.pieceColor && type == that.type;
     }
 
-    //    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//        ChessPiece that = (ChessPiece) o;
-//        return pieceColor == that.pieceColor && type == that.type;
-//    }
+
 
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
     }
 
-    //    @Override
-//    public int hashCode() {
-//        return Objects.hash(pieceColor, type);
-//    }
 
 
 
@@ -380,27 +366,5 @@ public class ChessPiece {
 
 
 
-
-//        for (int[] direction : directions) {
-//            int deltaRow = direction[0];
-//            int deltaCol = direction[1];
-//
-//            for (int i = 1; i <= 7; i++) {
-//                int newRow = row + i * deltaRow;
-//                int newCol = col + i * deltaCol;
-//
-//                if (isValPos(newRow, newCol)) {
-//                    ChessPiece targetPiece = board.getPiece(new ChessPosition(newRow + 1, newCol + 1));
-//                    if (targetPiece == null) {
-//                        validMoves.add(new ChessMove(myPosition, new ChessPosition(newRow + 1, newCol + 1), getPieceType()));
-//                    }
-//
-//                }
-//            }
-//
-//            // i reckon that should work for the bishop
-//        }
-//        return validMoves;
-//    }
 
 
