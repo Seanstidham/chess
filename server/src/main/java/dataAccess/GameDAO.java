@@ -13,4 +13,6 @@ public interface GameDAO {
 
     void updatedGame(String gameID, GameData updatedGameData) throws DataAccessException;
 
+    void clear() throws DataAccessException;
+
 }
