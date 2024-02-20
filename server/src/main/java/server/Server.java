@@ -1,6 +1,9 @@
 package server;
 
 import spark.*;
+import dataAccess.*;
+import service.RegisterService;
+import service.LoginService;
 
 public class Server {
 
