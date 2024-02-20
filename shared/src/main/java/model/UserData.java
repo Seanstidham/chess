@@ -7,6 +7,6 @@ public record UserData(String username, String password, String email) {
         return username;
     }
     public String toString() {
-        return new Gson.toJson(this);
+        return new Gson().toJson(this);
     }
 }
