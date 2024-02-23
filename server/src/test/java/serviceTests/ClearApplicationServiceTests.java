@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ClearApplicationServiceTest {
+public class ClearApplicationServiceTests {
     //pretty similar to the register tests
     private UserDAO userDAO;
     private GameDAO gameDAO;
@@ -20,7 +20,7 @@ public class ClearApplicationServiceTest {
         userDAO = new MemoryUserDAO();
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
-        clearApplicationService = new ClearApplicationService(userDAO, gameDAO, authDAO);
+        clearApplicationService = new ClearApplicationService(authDAO, gameDAO, userDAO);
     }
     //clear is the only test we just need a positive
     @Test

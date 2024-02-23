@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RegisterServiceTest {
+public class RegisterServiceTests {
     private UserDAO userDAO;
     private AuthDAO authDAO;
     private RegisterService registerService;
