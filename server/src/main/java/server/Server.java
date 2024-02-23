@@ -24,6 +24,9 @@ public class Server {
         ClearApplicationHandler clearApplicationHandler = new ClearApplicationHandler(clearApplicationService);
         Spark.delete("/db", (request, response) -> clearApplicationHandler.clearDatabase(response));
 
+        LoginHandler loginHandler = new LoginHandler(new LoginService(userDAO, authDAO));
+        Spark.post("/session", loginHandler::login);
+
         Spark.awaitInitialization();
         return Spark.port();
     }
