@@ -2,8 +2,7 @@ package server;
 
 import spark.*;
 import dataAccess.*;
-import service.RegisterService;
-import service.LoginService;
+import service.*;
 import handler.*;
 
 
@@ -20,6 +19,10 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         RegisterHandler registerHandler = new RegisterHandler(new RegisterService(userDAO, authDAO));
         Spark.post("/user", registerHandler::register);
+
+        ClearApplicationService clearApplicationService = new ClearApplicationService(authDAO, gameDAO, userDAO);
+        ClearApplicationHandler clearApplicationHandler = new ClearApplicationHandler(clearApplicationService);
+        Spark.delete("/db", (request, response) -> clearApplicationHandler.clearDatabase(response));
 
         Spark.awaitInitialization();
         return Spark.port();
