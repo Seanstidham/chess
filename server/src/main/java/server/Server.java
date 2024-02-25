@@ -33,6 +33,9 @@ public class Server {
         CreateGameHandler createGameHandler = new CreateGameHandler(new CreateGameService(gameDAO, authDAO));
         Spark.post("/game", createGameHandler::createGame);
 
+        ListGamesHandler listGamesHandler = new ListGamesHandler(new ListGamesService(gameDAO, authDAO));
+        Spark.get("/game", listGamesHandler::listGames);
+
         Spark.awaitInitialization();
         return Spark.port();
     }

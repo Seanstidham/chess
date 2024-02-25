@@ -17,9 +17,9 @@ public class CreateGameServiceTests {
     @BeforeEach
     public void setmeupMordecai() {
         //ik nobody reads any of my comments, but if you understand the "Set me up, Mordecai!" reference you've earned my respect
-        this.gameDAO = new MemoryGameDAO();
-        this.authDAO = new MemoryAuthDAO();
-        this.createGameService = new CreateGameService(gameDAO, authDAO);
+        gameDAO = new MemoryGameDAO();
+        authDAO = new MemoryAuthDAO();
+        createGameService = new CreateGameService(gameDAO, authDAO);
 
         //ik im going fast but i just figured out i needed to move the init setup try to the positive test because it has 2 parameters in CreateGame
 
