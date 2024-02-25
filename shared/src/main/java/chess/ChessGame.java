@@ -214,17 +214,22 @@ public class ChessGame {
             return false;
         }
         //now I think we can just iterate the whole board and make sure getMoves isnt empty
-        for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++) {
-                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row,col));
-                if (pieceCheck != null && pieceCheck.getTeamColor() == teamColor) {
-                    Collection<ChessMove> getMoves = validMoves(new ChessPosition(row,col));
-                    if (getMoves != null && !getMoves.isEmpty()) {
+        int row = 1;
+        while (row < 9) {
+            int col = 1;
+            while (col < 9) {
+                ChessPiece piececheckCheckmate;
+                piececheckCheckmate = chessBoard.getPiece(new ChessPosition(row,col));
+                if (piececheckCheckmate != null && piececheckCheckmate.getTeamColor() == teamColor) {
+                    Collection<ChessMove> getmovesCheckmate = validMoves(new ChessPosition(row,col));
+                    if (getmovesCheckmate != null && !getmovesCheckmate.isEmpty()) {
                         return false;
                     }
                 }
 
+                col++;
             }
+            row++;
         }
         return true;
     }
@@ -247,8 +252,8 @@ public class ChessGame {
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 //literally just the same logic as checkmate pretty sure
-                ChessPiece pieceCheck = chessBoard.getPiece(new ChessPosition(row, col));
-                if (pieceCheck != null && pieceCheck.getTeamColor() == teamColor) {
+                ChessPiece piececheckStalemate = chessBoard.getPiece(new ChessPosition(row, col));
+                if (piececheckStalemate != null && piececheckStalemate.getTeamColor() == teamColor) {
                     Collection<ChessMove> getMoves = validMoves(new ChessPosition(row, col));
                     if (getMoves != null && !getMoves.isEmpty()) {
                         return false;
