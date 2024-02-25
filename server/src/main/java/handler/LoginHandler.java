@@ -24,7 +24,7 @@ public class LoginHandler {
 
         try {
             LoginResult loginResult = loginService.login(loginRequest);
-            int statusCode = loginResult.errorMessage() != null ? 401 : 200;
+            int statusCode = loginResult.message() != null ? 401 : 200;
             response.status(statusCode);
             return gson.toJson(loginResult);
         } catch (DataAccessException e) {

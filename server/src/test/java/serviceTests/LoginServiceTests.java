@@ -41,7 +41,7 @@ public class LoginServiceTests {
         assertNotNull(badEndingresult);
         assertNull(badEndingresult.authToken());
         assertNull(badEndingresult.username());
-        assertEquals("Error: unauthorized ", badEndingresult.errorMessage());
+        assertEquals("Error: unauthorized ", badEndingresult.message());
     }
     @Test
     public void positiveLoginServiceTest ()  {
@@ -55,7 +55,7 @@ public class LoginServiceTests {
         }
 
         assertNotNull(goodEndingresult);
-        assertNull(goodEndingresult.errorMessage());
+        assertNull(goodEndingresult.message());
         assertNotNull(goodEndingresult.authToken());
         assertEquals("Nami", goodEndingresult.username());
     }

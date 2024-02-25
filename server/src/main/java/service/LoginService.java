@@ -35,7 +35,7 @@ public class LoginService {
         var user = userDAO.getUser(request.username());
 
         if (user == null || !user.password().equals(request.password())) {
-            return new LoginResult(null, null, "Invalid username or password");
+            return new LoginResult(null, null, "Error: Invalid username or password"); //found it
         }
         String authToken = UUID.randomUUID().toString();
         AuthData newBoy = new AuthData(authToken, user.username());
@@ -44,4 +44,8 @@ public class LoginService {
 
         return new LoginResult(user.username(), authToken, null);
     }
+
+    //im getting a AssertionFailedError: Response missing error message ==>
+    //going to see if a try catch block fixes it
+    //oh nvm its looking for a specific message
 }
