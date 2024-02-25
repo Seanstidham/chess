@@ -30,6 +30,9 @@ public class Server {
         LogoutHandler logoutHandler = new LogoutHandler(new LogoutService(authDAO));
         Spark.delete("/session", logoutHandler::logout);
 
+        CreateGameHandler createGameHandler = new CreateGameHandler(new CreateGameService(gameDAO, authDAO));
+        Spark.post("/game", createGameHandler::createGame);
+
         Spark.awaitInitialization();
         return Spark.port();
     }
