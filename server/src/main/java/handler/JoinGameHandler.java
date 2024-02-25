@@ -22,7 +22,7 @@ public class JoinGameHandler {
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
         String authToken = request.headers("authorization");
 
-        if (joinGameRequest == null || joinGameRequest.gameID() == null) {
+        if (joinGameRequest == null || joinGameRequest.gameID() == null || joinGameRequest.gameID() < 1) {
             response.status(400);
             return gson.toJson(new JoinGameResult("Error: bad request"));
         }
