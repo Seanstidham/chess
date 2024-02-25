@@ -18,7 +18,7 @@ public class JoinGameService {
 
     public JoinGameResult joinGame(String authToken, JoinGameRequest request) throws DataAccessException {
         if (!isValidAuthToken(authToken)) {
-            return new JoinGameResult("Error: Unauthorized");
+            return new JoinGameResult("Error: unauthorized");
         }
         GameData game = gameDAO.getGame(request.gameID());
         String playerColor = request.playerColor();

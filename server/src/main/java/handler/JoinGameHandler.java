@@ -29,16 +29,16 @@ public class JoinGameHandler {
 
         try {
             JoinGameResult joinGameResult = joinGameService.joinGame(authToken, joinGameRequest);
-            int statusCode = joinGameResult.message() == null ? 200 : 400;
+
             if (joinGameResult.message() != null) {
                 String message = joinGameResult.message();
                 if (message.contains("unauthorized")) {
-                    statusCode = 401;
+                    response.status(401);
                 } else if (message.contains("already taken")) {
-                    statusCode = 403;
+                    response.status(403);
                 }
             }
-            response.status(statusCode);
+
             return gson.toJson(joinGameResult);
         } catch (DataAccessException e) {
             response.status(500);
