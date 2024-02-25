@@ -55,7 +55,7 @@ public class RegisterServiceTests {
         //so eveything i need to assert is the authToken, username, and message and see if everything calls properly
         //let me cook
         assertNull(badEndingresult.authToken());
-        assertNull(badEndingresult.Username());
+        assertNull(badEndingresult.username());
         assertNotNull(badEndingresult.message());
         assertNotNull(badEndingresult);
         assertEquals("Error: already taken", badEndingresult.message());
@@ -77,7 +77,7 @@ public class RegisterServiceTests {
         assertNull(goodEndingresult.message());
         assertNotNull(goodEndingresult.authToken());
         assertNotNull(goodEndingresult);
-        assertEquals("randomUser", goodEndingresult.Username());
+        assertEquals("randomUser", goodEndingresult.username());
     }
     //okay think thats good
 
