@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -96,11 +97,11 @@ public class ChessPiece {
                         break;
                     }
                     ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                    ChessPiece SpaceCheck = board.getPiece(newPosition);
-                    if (SpaceCheck == null) {
+                    ChessPiece spacecheckQueen = board.getPiece(newPosition);
+                    if (spacecheckQueen == null) {
                         validMoves.add(new ChessMove(myPosition, newPosition, null));
                     } else {
-                        if (SpaceCheck.getTeamColor() != getTeamColor()) {
+                        if (spacecheckQueen.getTeamColor() != getTeamColor()) {
                             validMoves.add(new ChessMove(myPosition, newPosition, null));
                         }
                         break;
@@ -173,12 +174,6 @@ public class ChessPiece {
                 int newRow = myPosition.getRow() + deltaRow;
                 int newCol = myPosition.getColumn() + deltaCol;
 
-                //implementing promotion
-                // will come back to it, it hard af or im stupid af
-//                if (newRow == 8 || newRow == 1) {
-//
-//                }
-
                 if (newRow > 1 && newRow < 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newpositionPawn = new ChessPosition(newRow, newCol);
                     ChessPiece spacecheckPawn = board.getPiece(newpositionPawn);
@@ -239,7 +234,8 @@ public class ChessPiece {
                         break;
 
                     }
-                    if (target1 != null && target1.getTeamColor() != getTeamColor()) {
+                    if (target1 == null || target1.getTeamColor() == getTeamColor()) {
+                    } else {
 
                         validMoves.add(new ChessMove(myPosition,targetCheckRight1,PieceType.QUEEN));
                         validMoves.add(new ChessMove(myPosition, targetCheckRight1,PieceType.KNIGHT));
@@ -247,30 +243,24 @@ public class ChessPiece {
                         validMoves.add(new ChessMove(myPosition, targetCheckRight1,PieceType.BISHOP));
 
                     }
-                    if (target2 != null && target2.getTeamColor() != getTeamColor()) {
-                        validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.QUEEN));
-                        validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.KNIGHT));
-                        validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.ROOK));
-                        validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.BISHOP));
-                        //alright lets see if this horrendous thing works
+                    if (null == target2 || target2.getTeamColor() == getTeamColor()) {
+                        continue;
                     }
+                    validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.QUEEN));
+                    validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.KNIGHT));
+                    validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.ROOK));
+                    validMoves.add(new ChessMove(myPosition, targetCheckLeft1,PieceType.BISHOP));
+                    //alright lets see if this horrendous thing works
                 }
             }
-
         }
-
-
-        //if it ain't broke
         if (getPieceType() == PieceType.KNIGHT) {
-
             int[][] directions = {{-2, -1}, {-1, -2}, {1, -2}, {2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}};
-
-            for (int[] direction : directions) {
+            Arrays.stream(directions).forEach(direction -> {
                 int deltaRow = direction[0];
                 int deltaCol = direction[1];
                 int newRow = myPosition.getRow() + deltaRow;
                 int newCol = myPosition.getColumn() + deltaCol;
-
                 if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newpositionKnight = new ChessPosition(newRow, newCol);
                     ChessPiece spacecheckKnight = board.getPiece(newpositionKnight);
@@ -278,22 +268,15 @@ public class ChessPiece {
                         validMoves.add(new ChessMove(myPosition, newpositionKnight, null));
                     }
                 }
-            }
+            });
         }
-
-
-        // okay now that Bishop works, going to try something and this is gonna be gross if this works
-        // oh no, it DOES work. guess its gonna be a ton of gross if statements
         if (getPieceType() == PieceType.KING) {
-
             int[][] directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-
             for (int[] direction : directions) {
                 int deltaRow = direction[0];
                 int deltaCol = direction[1];
                 int newRow = myPosition.getRow() + deltaRow;
                 int newCol = myPosition.getColumn() + deltaCol;
-
                 if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
                     ChessPosition newpositionKing = new ChessPosition(newRow, newCol);
                     ChessPiece spacecheckKing = board.getPiece(newpositionKing);
@@ -303,47 +286,36 @@ public class ChessPiece {
                 }
             }
         }
-
         if (getPieceType() == PieceType.BISHOP) {
-
             int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-            //now i need a way that all the possible moves are read
-            // lets try something a bit different and see if that works
             for (int[] direction : directions) {
                 int newRow = myPosition.getRow();
                 int newCol = myPosition.getColumn();
                 int deltaRow = direction[0];
                 int deltaCol = direction[1];
-
-                while (true) {
-                    newRow += deltaRow;
-                    newCol += deltaCol;
-
-                    // gonna try to set up an if statement instead of a whole helper function
-                    if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                do {
+                    newRow = newRow + deltaRow;
+                    newCol = newCol + deltaCol;
+                    if (newRow < 1 || newRow > 8 || newCol > 8 || newCol < 1) {
                         break;
                     }
-                    // I need to now add the new position so that we can check for blank spots
-                    ChessPosition newpositionBishop = new ChessPosition(newRow, newCol);
-                    ChessPiece spacecheckBishop = board.getPiece(newpositionBishop);
+                    ChessPosition newpositionBishop;
+                    newpositionBishop = new ChessPosition(newRow, newCol);
+                    ChessPiece spacecheckBishop;
+                    spacecheckBishop = board.getPiece(newpositionBishop);
                     if (spacecheckBishop == null) {
                         validMoves.add(new ChessMove(myPosition, newpositionBishop, null));
                     } else {
-                        // now to implement capturing and being blocked by same color pieces;
                         if (spacecheckBishop.getTeamColor() != getTeamColor()) {
                             validMoves.add(new ChessMove(myPosition, newpositionBishop, null));
                         }
                         break;
                     }
-                }
-
+                } while (true);
             }
-
         }
         return validMoves;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -351,17 +323,10 @@ public class ChessPiece {
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }
-
-
-
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
     }
-
-
-
-
 }
 
 

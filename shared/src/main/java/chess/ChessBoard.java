@@ -40,12 +40,6 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board.put(position, piece);
 
-
-
-//        int row = position.getRow();
-//        int col = position.getColumn();
-//        board[row][col] = piece;
-
     }
 
     /**
@@ -71,10 +65,6 @@ public class ChessBoard {
         //return the curr value
         return curr;
 
-
-//        int row = position.getRow();
-//        int col = position.getColumn();
-//        return board[row][col];
     }
 
     /**

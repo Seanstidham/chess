@@ -13,7 +13,7 @@ public class ChessGame {
     // so first time to take care of the privates
     private TeamColor teamTurn;
     private ChessBoard chessBoard;
-    private ChessMove last_move;
+    private ChessMove lastMove;
 
     public ChessGame() {
         // now the inits
@@ -23,7 +23,7 @@ public class ChessGame {
         //now i need to set the first turn to white
         teamTurn = TeamColor.WHITE;
         //and finally reset the last_move storage
-        last_move = null;
+        lastMove = null;
 
     }
 
@@ -90,7 +90,7 @@ public class ChessGame {
             ChessPosition start = move.getStartPosition();
             ChessPosition end = move.getEndPosition();
             // i need to add a SpaceCheck that restores the piece on the end position
-            ChessPiece SpaceCheck = chessBoard.getPiece(end);
+            ChessPiece spaceCheck3 = chessBoard.getPiece(end);
 
             //now i gotta simulate the move maybe a move the pieces and then check if in check then move it all back prolly
             // imma cook with that
@@ -106,8 +106,8 @@ public class ChessGame {
             chessBoard.addPiece(start, currPiece);
             chessBoard.roofPiece(end, currPiece);
 
-            if (SpaceCheck != null) {
-                chessBoard.addPiece(end, SpaceCheck);
+            if (spaceCheck3 != null) {
+                chessBoard.addPiece(end, spaceCheck3);
             }
 
 
@@ -154,7 +154,7 @@ public class ChessGame {
 
         //set the last_move
         currPiece.setMoved();
-        last_move = move;
+        lastMove = move;
 
         // now update the team turn
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
