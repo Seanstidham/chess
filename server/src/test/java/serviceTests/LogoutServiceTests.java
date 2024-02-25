@@ -30,7 +30,7 @@ public class LogoutServiceTests {
 
         assertNotNull(result);
         assertNotNull(result.message());
-        assertEquals("Error: Unauthorized", result.message());
+        assertEquals("Error: unauthorized", result.message());
     }
     @Test
     public void testPositiveLogout() {
