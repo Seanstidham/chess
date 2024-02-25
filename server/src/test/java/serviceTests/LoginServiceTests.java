@@ -41,11 +41,11 @@ public class LoginServiceTests {
         assertNotNull(badEndingresult);
         assertNull(badEndingresult.authToken());
         assertNull(badEndingresult.username());
-        assertEquals("Error: unauthorized ", badEndingresult.message());
+        assertEquals("Error: Invalid username or password", badEndingresult.message());
     }
     @Test
     public void positiveLoginServiceTest ()  {
-        LoginRequest goodEndingrequest = new LoginRequest("Nami", "catburglar");
+        LoginRequest goodEndingrequest = new LoginRequest("kingofthepirates", "meat");
 
         LoginResult goodEndingresult = null;
         try {
@@ -57,7 +57,7 @@ public class LoginServiceTests {
         assertNotNull(goodEndingresult);
         assertNull(goodEndingresult.message());
         assertNotNull(goodEndingresult.authToken());
-        assertEquals("Nami", goodEndingresult.username());
+        assertEquals("kingofthepirates", goodEndingresult.username());
     }
 
 
