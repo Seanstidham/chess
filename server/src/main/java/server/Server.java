@@ -36,6 +36,9 @@ public class Server {
         ListGamesHandler listGamesHandler = new ListGamesHandler(new ListGamesService(gameDAO, authDAO));
         Spark.get("/game", listGamesHandler::listGames);
 
+        JoinGameHandler joinGameHandler = new JoinGameHandler(new JoinGameService(gameDAO, authDAO));
+        Spark.put("/game", joinGameHandler::joinGame);
+
         Spark.awaitInitialization();
         return Spark.port();
     }
