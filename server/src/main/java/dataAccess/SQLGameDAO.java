@@ -29,12 +29,12 @@ public class SQLGameDAO implements GameDAO {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String query : CREATE_GAMES_TABLE_QUERY) {
-                try (PreparedStatement statement = conn.prepareStatement(query)) {
-                    statement.executeUpdate();
+                try (PreparedStatement magicConch = conn.prepareStatement(query)) {
+                    magicConch.executeUpdate();
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error configuring database: " + e.getMessage());
+            throw new DataAccessException("Error configuring the database: " + e.getMessage());
         }
     }
     private static final String[] CREATE_GAMES_TABLE_QUERY = {
@@ -131,7 +131,7 @@ public class SQLGameDAO implements GameDAO {
              PreparedStatement magicConch = conn.prepareStatement("TRUNCATE TABLE games")) {
             magicConch.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error while clearing game data: " + e.getMessage());
+            throw new DataAccessException("Error nuking game data: " + e.getMessage());
         }
     }
 
