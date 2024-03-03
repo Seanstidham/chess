@@ -45,6 +45,7 @@ public class MemoryUserDAODatabaseTest {
     public void negativeGetUserTest() throws DataAccessException {
         String schizoUser = "they_are_listening";
         assertNull(userDAO.getUser(schizoUser)); //ever just think youre developing schizophrenia?
+        //after writing so many test files I think I could be :)
     }
     @Test
     public void positiveGetUserTest() throws DataAccessException {
