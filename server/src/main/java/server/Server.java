@@ -7,16 +7,24 @@ import handler.*;
 
 
 public class Server {
-    private UserDAO userDAO = new MemoryUserDAO();
-    private AuthDAO authDAO = new MemoryAuthDAO();
-    private GameDAO gameDAO = new MemoryGameDAO();
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        AuthDAO authDAO;
+        GameDAO gameDAO;
+        UserDAO userDAO;
+        try {
+            authDAO = new SQLAuthDAO();
+            gameDAO = new SQLGameDAO();
+            userDAO = new SQLUserDAO();
+        } catch (DataAccessException e) {
+            authDAO = new MemoryAuthDAO();
+            gameDAO = new MemoryGameDAO();
+            userDAO = new MemoryUserDAO();
+        }
         RegisterHandler registerHandler = new RegisterHandler(new RegisterService(userDAO, authDAO));
         Spark.post("/user", registerHandler::register);
 

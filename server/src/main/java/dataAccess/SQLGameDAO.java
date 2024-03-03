@@ -122,7 +122,7 @@ public class SQLGameDAO implements GameDAO {
             magicConch.setInt(5, gameID);
             magicConch.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error while updating game: " + e.getMessage());
+            throw new DataAccessException("Error updating game: " + e.getMessage());
         }
     }
     @Override
