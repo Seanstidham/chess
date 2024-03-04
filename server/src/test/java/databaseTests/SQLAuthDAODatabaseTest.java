@@ -90,4 +90,5 @@ public class SQLAuthDAODatabaseTest {
         assertNull(authDAO.getAuth("token1"));
         assertNull(authDAO.getAuth("token2"));
     }
+    //well that made writing tests far easier
 }

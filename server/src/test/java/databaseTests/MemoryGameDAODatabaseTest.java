@@ -23,12 +23,12 @@ public class MemoryGameDAODatabaseTest {
     }
     @Test
     public void negativeCreateGameTest() throws DataAccessException {
-        GameData badendinggameData1 = new GameData(1, "Player1", "Player2", "Game 1", null);
+        GameData badendinggameData = new GameData(1, "Player1", "Player2", "Game 1", null);
 
-        gameDAO.createGame(badendinggameData1);
+        gameDAO.createGame(badendinggameData);
 
-        GameData badendinggameData2 = new GameData(1, "Player3", "Player4", "Game 2", null);
-        assertThrows(DataAccessException.class, () -> gameDAO.createGame(badendinggameData2));
+        GameData badendinggameData1 = new GameData(1, "Player3", "Player4", "Game 2", null);
+        assertThrows(DataAccessException.class, () -> gameDAO.createGame(badendinggameData1));
     }
     @Test
     public void positiveCreateGameTest() throws DataAccessException {
@@ -56,12 +56,12 @@ public class MemoryGameDAODatabaseTest {
 
         GameData yoinkedData = gameDAO.getGame(1);
 
-        assertNotNull(yoinkedData);
         assertEquals(1, yoinkedData.gameID());
         assertEquals("white", yoinkedData.whiteUsername());
         assertEquals("black", yoinkedData.blackUsername());
         assertEquals("Test Game", yoinkedData.gameName());
         assertNotNull(yoinkedData.game());
+        assertNotNull(yoinkedData);
     }
     @Test
     public void negativeListGamesTest() throws DataAccessException {
@@ -82,12 +82,12 @@ public class MemoryGameDAODatabaseTest {
         GameData goodendingtestData1 = new GameData(2, "white2", "black2", "Test Game 2", goodendingtestGame1);
         gameDAO.createGame(goodendingtestData1);
 
-        GameData[] games = gameDAO.listGames();
+        GameData[] alltheGames = gameDAO.listGames();
 
-        assertNotNull(games);
-        assertEquals(2, games.length);
-        assertEquals(games[0].gameID(),goodendingtestData.gameID());
-        assertEquals(games[1].gameID(), goodendingtestData1.gameID());
+        assertNotNull(alltheGames);
+        assertEquals(2, alltheGames.length);
+        assertEquals(alltheGames[0].gameID(),goodendingtestData.gameID());
+        assertEquals(alltheGames[1].gameID(), goodendingtestData1.gameID());
     }
     @Test
     public void negativeUpdatedGameTest() throws DataAccessException {
@@ -113,11 +113,11 @@ public class MemoryGameDAODatabaseTest {
     }
     @Test
     public void positiveClearTest() throws DataAccessException {
-        GameData testGame1 = new GameData(1, "P1", "P2", "G1", null);
-        GameData testGame2 = new GameData(2, "P3", "P4", "G2", null);
+        GameData testGame = new GameData(1, "P1", "P2", "G1", null);
+        GameData testGame1 = new GameData(2, "P3", "P4", "G2", null);
 
+        gameDAO.createGame(testGame);
         gameDAO.createGame(testGame1);
-        gameDAO.createGame(testGame2);
 
         assertEquals(2, gameDAO.listGames().length);
 
