@@ -1,4 +1,6 @@
 package databaseTests;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import model.GameData;
 import dataAccess.*;
 import chess.ChessGame;
@@ -9,6 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SQLGameDAODatabaseTest {
     GameDAO gameDAO;
+//    @Test
+//    public void gsonTest() throws DataAccessException{
+//        ChessGame newGame = new ChessGame();
+//        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+//        String newString = gson.toJson(newGame);
+//        ChessGame newGame1 = gson.fromJson(newString, ChessGame.class);
+//        System.out.println(newString);
+//
+//
+//
+//    }
+
     @BeforeEach
     public void setmeupMordecai() throws DataAccessException {
         gameDAO = new SQLGameDAO();

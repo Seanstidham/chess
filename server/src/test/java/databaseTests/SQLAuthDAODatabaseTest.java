@@ -33,7 +33,7 @@ public class SQLAuthDAODatabaseTest {
     }
     @Test
     public void positiveCreateAuthTest() throws DataAccessException {
-        AuthData goodendingauthData = new AuthData("test_token", "Kaido");
+        AuthData goodendingauthData = new AuthData("test_token", "test_user");
 
         authDAO.createAuth(goodendingauthData);
 

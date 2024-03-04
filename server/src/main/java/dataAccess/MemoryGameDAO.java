@@ -8,8 +8,12 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public GameData createGame(GameData game) throws DataAccessException {
-        fortniteMap.put(game.gameID(), game);
-        return game;
+        if (fortniteMap.containsKey(game.gameID())) {
+            throw new DataAccessException("Username already exists");
+        } else {
+            fortniteMap.put(game.gameID(), game);
+            return game;
+        }
     }
 
     @Override

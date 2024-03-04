@@ -8,8 +8,12 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public UserData createUser(UserData user) throws DataAccessException {
-        realboyMap.put(user.username(), user);
-        return user;
+        if (realboyMap.containsKey(user.username())) {
+            throw new DataAccessException("Username already exists");
+        } else {
+            realboyMap.put(user.username(), user);
+            return user;
+        }
     }
     @Override
     public UserData getUser(String username) throws DataAccessException {

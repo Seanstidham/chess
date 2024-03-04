@@ -1,12 +1,14 @@
 package service;
 
 import dataAccess.DataAccessException;
+import dataAccess.SQLUserDAO;
 import request.LoginRequest;
 import result.LoginResult;
 import dataAccess.UserDAO;
 import dataAccess.AuthDAO;
 import model.AuthData;
 import java.util.UUID;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class LoginService {
 
@@ -33,9 +35,16 @@ public class LoginService {
     public LoginResult login(LoginRequest request) throws DataAccessException {
         //init a user
         var user = userDAO.getUser(request.username());
+        if(userDAO instanceof SQLUserDAO) {
+            BCryptPasswordEncoder secretPassword = new BCryptPasswordEncoder();
+            if(user == null || !secretPassword.matches(request.password(), user.password())) {
+                return new LoginResult(null, null, "Error: Invalid username or password");
+            }
+        } else {
 
-        if (user == null || !user.password().equals(request.password())) {
-            return new LoginResult(null, null, "Error: Invalid username or password"); //found it
+            if (user == null || !user.password().equals(request.password())) {
+                return new LoginResult(null, null, "Error: Invalid username or password"); //found it
+            }
         }
         String authToken = UUID.randomUUID().toString();
         AuthData newBoy = new AuthData(authToken, user.username());

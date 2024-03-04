@@ -1,4 +1,5 @@
 package dataAccess;
+import com.google.gson.GsonBuilder;
 import model.GameData;
 import chess.ChessGame;
 import com.google.gson.Gson;
@@ -19,10 +20,10 @@ public class SQLGameDAO implements GameDAO {
 //    Update the game’s JSON string in the database
 
     //I want to get a lot done, so imma cook
-    private Gson gson;
+    private final Gson gson;
 
     public SQLGameDAO() throws DataAccessException {
-        gson = new Gson();
+        gson = new GsonBuilder().enableComplexMapKeySerialization().create();
         configureDatabase();
     }
     private void configureDatabase() throws DataAccessException {
@@ -53,7 +54,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public GameData createGame(GameData gameData) throws DataAccessException {
         try(Connection conn = DatabaseManager.getConnection();
-        PreparedStatement magicConch = conn.prepareStatement("INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
+        PreparedStatement magicConch = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")) {
             magicConch.setInt(1, gameData.gameID());
             magicConch.setString(2, gameData.whiteUsername());
             magicConch.setString(3, gameData.blackUsername());
@@ -71,7 +72,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-        PreparedStatement magicConch = conn.prepareStatement("SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameID = ?")) {
+        PreparedStatement magicConch = conn.prepareStatement("SELECT whiteUsername, blackUsername, gameName, game FROM game WHERE gameID = ?")) {
             magicConch.setInt(1, gameID);
             try (ResultSet resultSet = magicConch.executeQuery()) {
                 if (resultSet.next()) {
@@ -94,7 +95,7 @@ public class SQLGameDAO implements GameDAO {
         //need a list data structure to hold the data here
         List<GameData> alloftheGames = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection();
-        PreparedStatement magicConch = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games")) {
+        PreparedStatement magicConch = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM game")) {
             try (ResultSet resultSet = magicConch.executeQuery()) {
                 for (; resultSet.next(); ) {
                     int gameID = resultSet.getInt("gameID");
@@ -114,7 +115,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void updatedGame(int gameID, GameData updatedGameData) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement magicConch = conn.prepareStatement("UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
+             PreparedStatement magicConch = conn.prepareStatement("UPDATE game SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?")) {
             magicConch.setString(1, updatedGameData.whiteUsername());
             magicConch.setString(2, updatedGameData.blackUsername());
             magicConch.setString(3, updatedGameData.gameName());
@@ -128,7 +129,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement magicConch = conn.prepareStatement("TRUNCATE TABLE games")) {
+             PreparedStatement magicConch = conn.prepareStatement("TRUNCATE TABLE game")) {
             magicConch.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error nuking game data: " + e.getMessage());

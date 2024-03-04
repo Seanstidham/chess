@@ -25,16 +25,7 @@ public class MemoryAuthDAODatabaseTest {
         }
     }
 
-    @Test
-    public void negativeCreateAuthTest() throws DataAccessException{
-        AuthData badendingauthData = new AuthData("test_token", "BigMom");
 
-        authDAO.createAuth(badendingauthData);
-
-        assertThrows(DataAccessException.class, () -> {
-            authDAO.createAuth(badendingauthData);
-        });
-    }
     @Test
     public void positiveCreateAuthTest() throws DataAccessException {
         AuthData goodendingauthData = new AuthData("test_token", "Kaido");
@@ -46,6 +37,16 @@ public class MemoryAuthDAODatabaseTest {
         assertNotNull(yoinkedAuth);
         assertEquals(goodendingauthData.authToken(), yoinkedAuth.authToken());
         assertEquals(goodendingauthData.username(), yoinkedAuth.username());
+    }
+    @Test
+    public void negativeCreateAuthTest() throws DataAccessException{
+        AuthData badendingauthData = new AuthData("test_token", "test_user");
+
+        authDAO.createAuth(badendingauthData);
+
+        assertThrows(DataAccessException.class, () -> {
+            authDAO.createAuth(badendingauthData);
+        });
     }
     @Test
     public void negativeGetAuthTest() throws DataAccessException {

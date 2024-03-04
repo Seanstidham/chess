@@ -1,5 +1,6 @@
 package dataAccess;
 import model.AuthData;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,16 +22,15 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public AuthData createAuth(AuthData auth) throws DataAccessException {
 //        Make sure that you wrap your calls to get a connection with a try-with-resources block so that the connection gets cleaned up.
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement magicConch = conn.prepareStatement("INSERT INTO auth (auth_token, username) VALUES (?, ?)")) {
+        try(Connection conn = DatabaseManager.getConnection();
+        PreparedStatement magicConch = conn.prepareStatement("INSERT INTO auth (auth_token, username) VALUES (?, ?)")) {
             magicConch.setString(1, auth.authToken());
-            magicConch.setString(2, auth.authToken());
+            magicConch.setString(2, auth.username());
             magicConch.executeUpdate();
             return auth;
         } catch (SQLException e) {
             throw new DataAccessException("Error with auth data: " + e.getMessage());
         }
-
     }
 
     @Override

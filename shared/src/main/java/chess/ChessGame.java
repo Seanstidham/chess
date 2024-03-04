@@ -13,7 +13,7 @@ public class ChessGame {
     // so first time to take care of the privates
     private TeamColor teamTurn;
     private ChessBoard chessBoard;
-    private ChessMove lastMove;
+
 
     public ChessGame() {
         // now the inits
@@ -23,7 +23,7 @@ public class ChessGame {
         //now i need to set the first turn to white
         teamTurn = TeamColor.WHITE;
         //and finally reset the last_move storage
-        lastMove = null;
+
 
     }
 
@@ -154,7 +154,6 @@ public class ChessGame {
 
         //set the last_move
         currPiece.setMoved();
-        lastMove = move;
 
         // now update the team turn
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;

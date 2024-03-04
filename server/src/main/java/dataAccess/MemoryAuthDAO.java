@@ -12,8 +12,12 @@ public class MemoryAuthDAO implements AuthDAO{
     // same classes i did in the DAO classes
     @Override
     public AuthData createAuth(AuthData auth) throws DataAccessException {
-        identiMap.put(auth.authToken(), auth);
-        return auth;
+        if (identiMap.containsKey(auth.authToken())) {
+            throw new DataAccessException("Username already exists");
+        } else {
+            identiMap.put(auth.authToken(), auth);
+            return auth;
+        }
     }
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
