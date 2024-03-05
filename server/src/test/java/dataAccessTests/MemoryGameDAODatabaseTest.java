@@ -1,4 +1,4 @@
-package databaseTests;
+package dataAccessTests;
 import model.GameData;
 import dataAccess.*;
 import chess.ChessGame;

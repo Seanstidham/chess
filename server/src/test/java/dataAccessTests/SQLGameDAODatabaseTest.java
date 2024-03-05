@@ -1,6 +1,4 @@
-package databaseTests;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package dataAccessTests;
 import model.GameData;
 import dataAccess.*;
 import chess.ChessGame;

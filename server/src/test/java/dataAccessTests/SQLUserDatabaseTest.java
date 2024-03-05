@@ -1,4 +1,4 @@
-package databaseTests;
+package dataAccessTests;
 import model.UserData;
 import dataAccess.*;
 import org.junit.jupiter.api.BeforeEach;
