@@ -49,6 +49,25 @@ public class ServerFacade {
     }
     //okay so now i need to see if I can set up all of these functions
     //login
+    public String login(String username, String password) {
+        try {
+            HttpURLConnection conn = prepareConnection("/session", "POST", true, "application/json");
+
+            JsonObject loginData = new JsonObject();
+            loginData.addProperty("username", username);
+            loginData.addProperty("password", password);
+
+            String authToken = executeRequest(conn, loginData);
+            if (authToken != null) {
+                System.out.println(EscapeSequences.ERASE_SCREEN);
+                System.out.println("Login successful");
+                return authToken;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     //register
     //logout
     //create game
