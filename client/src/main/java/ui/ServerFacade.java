@@ -69,6 +69,26 @@ public class ServerFacade {
         return null;
     }
     //register
+    public String register(String username, String password, String email) {
+        try {
+            HttpURLConnection conn = prepareConnection("/user", "POST", true, "application/json");
+
+            JsonObject registrationData = new JsonObject();
+            registrationData.addProperty("username", username);
+            registrationData.addProperty("password", password);
+            registrationData.addProperty("email", email);
+
+            String authToken = executeRequest(conn, registrationData);
+            if (authToken != null) {
+                System.out.println(EscapeSequences.ERASE_SCREEN);
+                System.out.println("Registration successful!");
+                return authToken;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     //logout
     //create game
     //list games
