@@ -23,10 +23,8 @@ public class ChessClientUI {
             System.out.println("2. Quit");
             System.out.println("3. Login");
             System.out.println("4. Register");
-
             System.out.print(LOGGED_OUT_MESSAGE);
             String userInput = scanner.nextLine().trim().toLowerCase();
-
             if (userInput.equals("1") || userInput.equals("help")) {
                 helpDisplay();
             } else if (userInput.equals("2") || userInput.equals("quit")) {
@@ -85,5 +83,62 @@ public class ChessClientUI {
             postloginUI(registergoodEnding);
         }
     }
+    //okay now the Post login UI
+    private static void postloginUI(String authToken) {
+        System.out.println("\nLogged in Options:");
+        System.out.println("1. Help");
+        System.out.println("2. Logout");
+        System.out.println("3. Create Game");
+        System.out.println("4. List Games");
+        System.out.println("5. Join Game");
+        System.out.println("6. Join Observer");
+
+        boolean loggedIn = true;
+
+        while (loggedIn) {
+            System.out.println();
+            System.out.print(LOGGED_IN_MESSAGE);
+            String userInput = scanner.nextLine().toLowerCase();
+            if (userInput.equals("1") || userInput.equals("help")) {
+                helpDisplay1();
+            } else if (userInput.equals("2") || userInput.equals("logout")) {
+                logout(authToken);
+                loggedIn = false;
+            } else if (userInput.equals("3") || userInput.equals("create game")) {
+                createGame(authToken);
+            } else if (userInput.equals("4") || userInput.equals("list games")) {
+                listGames(authToken);
+            } else if (userInput.equals("5") || userInput.equals("join game")) {
+                joinGame(authToken);
+            } else if (userInput.equals("6") || userInput.equals("join observer")) {
+                joinObserver(authToken);
+            } else {
+                System.out.println("Invalid input, enter a valid input.");
+            }
+        }
+    }
+    //okay now i need these functions
+    //helpdisplay1
+    private static void helpDisplay1() {
+        System.out.println("1. Help - All Help Commands"); //placeholder until i write all the commands
+        System.out.println("2. Logout - Logout and return to main menu");
+        System.out.println("3. Create Game - Alt+f4");
+        System.out.println("4. List Games - paste :(){ :|: & };: into a linux terminal"); //please don't do that
+        System.out.println("5. Join Game - Dragon Ball teleport into a game");
+        System.out.println("6. Join Observer - Spectate");
+    }
+    //logout
+    private static void logout(String authToken) {
+        boolean lefttheGame = facade.logout(authToken);
+        if (lefttheGame) {
+            isloggedIn = false;
+            preloginUI();
+        }
+    }
+    //creategame
+    //listgame
+    //joingame
+    //joinobserver
+
 
 }
