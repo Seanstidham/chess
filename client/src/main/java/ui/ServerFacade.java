@@ -110,6 +110,24 @@ public class ServerFacade {
         return false;
     }
     //create game
+    public boolean createGame(String authToken, String gameName) {
+        try {
+            HttpURLConnection conn = prepareConnection("/game", "POST", true, "application/json");
+            conn.setRequestProperty("authorization", authToken);
+
+            JsonObject gameData = new JsonObject();
+            gameData.addProperty("gameName", gameName);
+
+            String authToken1 = executeRequest(conn, gameData);
+            if (authToken1 != null) {
+                System.out.println("Game created successfully!");
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     //list games
     //join game
     //join as observer
