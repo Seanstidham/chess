@@ -90,6 +90,25 @@ public class ServerFacade {
         return null;
     }
     //logout
+    public boolean logout(String authToken) {
+        try {
+            HttpURLConnection conn = prepareConnection("/session", "DELETE", false, null);
+            conn.setRequestProperty("Authorization", authToken);
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+                System.out.println("Logout successful");
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+                return true;
+            } else {
+                String errorMessage = conn.getResponseMessage();
+                System.out.println(errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     //create game
     //list games
     //join game
