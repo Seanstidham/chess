@@ -136,9 +136,39 @@ public class ChessClientUI {
         }
     }
     //creategame
+    private static void createGame(String authToken) {
+//        Allows the user to input a name for the new game. Calls the server create API to create the game. This does not join the player to the created game; it only creates the new game in the server.
+        System.out.println("\nEnter name for new game:");
+        String thenameoftheGame = scanner.nextLine();
+        boolean gamecreationWorked = facade.createGame(authToken, thenameoftheGame);
+        if (gamecreationWorked) {
+            postloginUI(authToken);
+        }
+    }
     //listgame
+    private static void listGames(String authToken) {
+        System.out.println("List of all the Games: \n");
+        facade.listGames(authToken);
+    }
     //joingame
+    private static void joinGame(String authToken) {
+        System.out.println("Enter the number of the game you want to join: ");
+        int gameDigits = Integer.parseInt(scanner.nextLine());
+        System.out.println("Which color do you want to play as?: ");
+        String playerColor = scanner.nextLine();
+        if (facade.joinGame(gameDigits, playerColor, authToken)) {
+            GameUI.run; //Calls the server join API to join the user to the game.
+            //ik i havent set it up ill get there
+        }
+    }
     //joinobserver
+    private static void joinObserver(String authtoken) {
+        System.out.println("Enter the number of the game you want to join: ");
+        int gameDigits = Integer.parseInt(scanner.nextLine());
+        if (facade.joinObserver(gameDigits, authtoken)) {
+            GameUI.run;
+        }
+    }
 
 
 }
