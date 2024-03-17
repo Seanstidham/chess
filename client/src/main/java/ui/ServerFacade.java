@@ -10,10 +10,10 @@ import java.util.Map;
 public class ServerFacade {
     //okay first the imports
     //for list, join, and join observ imma need a way to store the stuff and the only way ik how to do that is with Hashmaps
-    private Map<Integer, Integer> crumblingfarumAzula; //sorry been playing a lot of Elden Ring lately
+    private Map<Integer, Integer> farumAzula; //sorry been playing a lot of Elden Ring lately
     private static String BASE_URL = "http://localhost:8080";
     public ServerFacade() {
-        this.crumblingfarumAzula = new HashMap<>();
+        this.farumAzula = new HashMap<>();
     }
     //okay i wanna try something lemme cook on this
     //my idea is to separate the HTTP connection is 2 different methods and have each one call them to handle the setup and the execution of it
@@ -129,6 +129,63 @@ public class ServerFacade {
         return false;
     }
     //list games
+    public void listGames(String authToken) {
+        try {
+            HttpURLConnection conn = prepareConnection("/game", "GET", false, null);
+            conn.setRequestProperty("authorization", authToken);
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                JsonObject responseObject = JsonParser.parseString(response.toString()).getAsJsonObject();
+                JsonArray gamesArray = responseObject.getAsJsonArray("games");
+                if (gamesArray != null) {
+                    int gameNumber = 1;
+                    farumAzula.clear();
+                    for (JsonElement gameElement : gamesArray) {
+                        JsonObject gameObject = gameElement.getAsJsonObject();
+                        int gameID = gameObject.get("gameID").getAsInt();
+                        String gameName = gameObject.get("gameName").getAsString();
+                        String whiteUsername = getStringOrNull(gameObject, "whiteUsername");
+                        String blackUsername = getStringOrNull(gameObject, "blackUsername");
+                        farumAzula.put(gameNumber, gameID);
+                        System.out.print("Game #: " + gameNumber + ", Game Name: " + gameName);
+                        System.out.print(", Players: ");
+                        if (whiteUsername == null) {
+                            System.out.print("White Player is Empty, ");
+                        } else {
+                            System.out.print(whiteUsername + ", ");
+                        }
+
+                        if (blackUsername == null) {
+                            System.out.println("Black is Empty");
+                        } else {
+                            System.out.println(blackUsername);
+                        }
+                        gameNumber++;
+                    }
+                } else {
+                    System.out.println("No games found.");
+                }
+            } else {
+                String error = conn.getResponseMessage();
+                System.out.println("Failed to list games: " + error);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private static String getStringOrNull(JsonObject jsonObject, String key) {
+        JsonElement element = jsonObject.get(key);
+        return element != null && !element.isJsonNull() ? element.getAsString() : null;
+    }
     //join game
     //join as observer
 
