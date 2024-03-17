@@ -100,15 +100,15 @@ public class ServerFacade {
         try {
             HttpURLConnection conn = prepareConnection("/session", "DELETE", false, null);
             conn.setRequestProperty("Authorization", authToken);
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
+
+            String response = executeRequest(conn, null);
+            if (response != null) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
                 System.out.println("Logout successful");
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 return true;
             } else {
-                String errorMessage = conn.getResponseMessage();
-                System.out.println(errorMessage);
+                System.out.println("Logout failed");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,5 +210,28 @@ public class ServerFacade {
         return false;
     }
     //join as observer
+    public boolean joinObserver(int gameID, String authToken) {
+        try {
+            HttpURLConnection conn = prepareConnection("/game", "PUT", true, "application/json");
+            conn.setRequestProperty("Authorization", authToken);
 
+            JsonObject joinObserverData = new JsonObject();
+            joinObserverData.addProperty("playerColor", "");
+            int realID = -1;
+            if (farumAzula.containsKey(gameID)) {
+                realID = farumAzula.get(gameID);
+            }
+            joinObserverData.addProperty("gameID", realID);
+
+            String authTokenResponse = executeRequest(conn, joinObserverData);
+            if (authTokenResponse != null) {
+                System.out.println("Joined game as observer successfully!");
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    //alright this is either going to be a dumpster fire or its gonna work
 }
