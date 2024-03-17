@@ -157,7 +157,7 @@ public class ChessClientUI {
         System.out.println("Which color do you want to play as?: ");
         String playerColor = scanner.nextLine();
         if (facade.joinGame(gameDigits, playerColor, authToken)) {
-            GameUI.run; //Calls the server join API to join the user to the game.
+            GameUI.run(); //Calls the server join API to join the user to the game.
             //ik i havent set it up ill get there
         }
     }
@@ -166,7 +166,7 @@ public class ChessClientUI {
         System.out.println("Enter the number of the game you want to join: ");
         int gameDigits = Integer.parseInt(scanner.nextLine());
         if (facade.joinObserver(gameDigits, authtoken)) {
-            GameUI.run;
+            GameUI.run();
         }
     }
 
