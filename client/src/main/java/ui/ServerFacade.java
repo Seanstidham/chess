@@ -26,24 +26,30 @@ public class ServerFacade {
         conn.setRequestProperty("Content-type", contentType);
         return conn;
     }
-    private String executeRequest(HttpURLConnection conn, JsonObject requestData) throws IOException {
-        if (conn == null)
-            return null;
+    private String executeRequest(HttpURLConnection conn, JsonObject requestData) {
+        try {
+            if (conn == null)
+                return null;
 
-        if (requestData != null) {
-            String jsonData = new Gson().toJson(requestData);
-            conn.getOutputStream().write(jsonData.getBytes());
-        }
-        conn.connect();
+            if (requestData != null) {
+                String jsonData = new Gson().toJson(requestData);
+                conn.getOutputStream().write(jsonData.getBytes());
+            }
+            conn.connect();
 
-        int responseCode = conn.getResponseCode();
-        if (responseCode == 200) {
-            return conn.getHeaderField("Authorization");
-        } else {
-            InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
-            JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
-            String errorMessage = errorResponse.get("message").getAsString();
-            System.out.println(errorMessage);
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                return conn.getHeaderField("Authorization");
+            } else {
+                String errorMessage;
+                try (InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream())) {
+                    JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                    errorMessage = errorResponse.get("message").getAsString();
+                }
+                System.out.println(errorMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -143,50 +149,66 @@ public class ServerFacade {
                     response.append(line);
                 }
                 reader.close();
-
                 JsonObject responseObject = JsonParser.parseString(response.toString()).getAsJsonObject();
                 JsonArray gamesArray = responseObject.getAsJsonArray("games");
                 if (gamesArray != null) {
-                    int gameNumber = 1;
+                    int gameNum = 1;
                     farumAzula.clear();
                     for (JsonElement gameElement : gamesArray) {
                         JsonObject gameObject = gameElement.getAsJsonObject();
                         int gameID = gameObject.get("gameID").getAsInt();
                         String gameName = gameObject.get("gameName").getAsString();
-                        String whiteUsername = getStringOrNull(gameObject, "whiteUsername");
-                        String blackUsername = getStringOrNull(gameObject, "blackUsername");
-                        farumAzula.put(gameNumber, gameID);
-                        System.out.print("Game #: " + gameNumber + ", Game Name: " + gameName);
+                        String whiteUsername = gameObject.has("whiteUsername") ? gameObject.get("whiteUsername").getAsString() : null;
+                        String blackUsername = gameObject.has("blackUsername") ? gameObject.get("blackUsername").getAsString() : null;
+                        farumAzula.put(gameNum, gameID);
+                        System.out.print("Game #: " + gameNum + ", Game Name: " + gameName);
                         System.out.print(", Players: ");
                         if (whiteUsername == null) {
-                            System.out.print("White Player is Empty, ");
+                            System.out.print("White is Empty, ");
                         } else {
                             System.out.print(whiteUsername + ", ");
                         }
-
                         if (blackUsername == null) {
                             System.out.println("Black is Empty");
                         } else {
                             System.out.println(blackUsername);
                         }
-                        gameNumber++;
+                        gameNum++;
                     }
                 } else {
                     System.out.println("No games found.");
                 }
             } else {
                 String error = conn.getResponseMessage();
-                System.out.println("Failed to list games: " + error);
+                System.out.println("Failed to function with the list: " + error);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private static String getStringOrNull(JsonObject jsonObject, String key) {
-        JsonElement element = jsonObject.get(key);
-        return element != null && !element.isJsonNull() ? element.getAsString() : null;
-    }
     //join game
+    public boolean joinGame(int gameID, String whiteOrBlack, String authToken) {
+        try {
+            HttpURLConnection conn = prepareConnection("/game", "PUT", true, "application/json");
+
+            JsonObject joinGameData = new JsonObject();
+            joinGameData.addProperty("playerColor", whiteOrBlack.toUpperCase());
+            int realID = -1;
+            if (farumAzula.containsKey(gameID)) {
+                realID = farumAzula.get(gameID);
+            }
+            joinGameData.addProperty("gameID", realID);
+
+            String authTokenResponse = executeRequest(conn, joinGameData);
+            if (authTokenResponse != null) {
+                System.out.println("Joined game successfully!");
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     //join as observer
 
 }
