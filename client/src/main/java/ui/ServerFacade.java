@@ -11,15 +11,17 @@ public class ServerFacade {
     //okay first the imports
     //for list, join, and join observ imma need a way to store the stuff and the only way ik how to do that is with Hashmaps
     private Map<Integer, Integer> farumAzula; //sorry been playing a lot of Elden Ring lately
-    private static String BASE_URL = "http://localhost:8080";
-    public ServerFacade() {
+    private static String BASE_URL = "http://localhost:";
+    private int serverPort;
+    public ServerFacade(int serverPort) {
         this.farumAzula = new HashMap<>();
+        this.serverPort = serverPort;
     }
     //okay i wanna try something lemme cook on this
     //my idea is to separate the HTTP connection is 2 different methods and have each one call them to handle the setup and the execution of it
     //let me cook this might be good or it might be bad
     private HttpURLConnection prepareConnection(String endpoint, String method, boolean doOutput, String contentType) throws IOException {
-        URL url = new URL(BASE_URL + endpoint);
+        URL url = new URL(BASE_URL + serverPort + endpoint);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method);
         conn.setDoOutput(doOutput);

@@ -7,7 +7,7 @@ public class ChessClientUI {
     private static String LOGGED_IN_MESSAGE = "[LOGGED-IN] >>> ";
     private static String LOGGED_OUT_MESSAGE = "[LOGGED-OUT] >>> ";
     private static boolean isloggedIn = false;
-    private static ServerFacade facade = new ServerFacade();
+    private static ServerFacade facade = new ServerFacade(8080);
     //okay now I should have everything
 
     public ChessClientUI() {
@@ -122,10 +122,10 @@ public class ChessClientUI {
     private static void helpDisplay1() {
         System.out.println("1. Help - All Help Commands"); //placeholder until i write all the commands
         System.out.println("2. Logout - Logout and return to main menu");
-        System.out.println("3. Create Game - Alt+f4");
-        System.out.println("4. List Games - paste :(){ :|: & };: into a linux terminal"); //please don't do that
-        System.out.println("5. Join Game - Dragon Ball teleport into a game");
-        System.out.println("6. Join Observer - Spectate");
+        System.out.println("3. Create Game - All Commands");
+        System.out.println("4. List Games - All Commands"); //please don't do that
+        System.out.println("5. Join Game - All Commands");
+        System.out.println("6. Join Observer - All Commands");
     }
     //logout
     private static void logout(String authToken) {
