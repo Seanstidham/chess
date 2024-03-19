@@ -41,7 +41,8 @@ public class ServerFacade {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                return conn.getHeaderField("Authorization");
+                String authToken = conn.getHeaderField("Authorization");
+                return authToken;
             } else {
                 String errorMessage;
                 try (InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream())) {
