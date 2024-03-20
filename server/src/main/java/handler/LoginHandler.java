@@ -26,6 +26,9 @@ public class LoginHandler {
             LoginResult loginResult = loginService.login(loginRequest);
             int statusCode = loginResult.message() != null ? 401 : 200;
             response.status(statusCode);
+            if (statusCode == 200 && loginResult.authToken() != null) {
+                response.header("authorization", loginResult.authToken());
+            }
             return gson.toJson(loginResult);
         } catch (DataAccessException e) {
             response.status(500);

@@ -41,7 +41,7 @@ public class ServerFacade {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                String authToken = conn.getHeaderField("Authorization");
+                String authToken = conn.getHeaderField("authorization");
                 return authToken;
             } else {
                 String errorMessage;
@@ -90,7 +90,7 @@ public class ServerFacade {
             String authToken = executeRequest(conn, registrationData);
             if (authToken != null) {
                 System.out.println(EscapeSequences.ERASE_SCREEN);
-                System.out.println("Registration successful!");
+                System.out.println("Registration successful");
                 return authToken;
             }
         } catch (IOException e) {
@@ -104,14 +104,18 @@ public class ServerFacade {
             HttpURLConnection conn = prepareConnection("/session", "DELETE", false, null);
             conn.setRequestProperty("Authorization", authToken);
 
-            String response = executeRequest(conn, null);
-            if (response != null) {
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
                 System.out.println("Logout successful");
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 return true;
             } else {
-                System.out.println("Logout failed");
+                InputStreamReader inputStreamReader = new InputStreamReader(conn.getErrorStream());
+                JsonObject errorResponse = JsonParser.parseReader(inputStreamReader).getAsJsonObject();
+                String errorMessage = errorResponse.get("message").getAsString();
+
+                System.out.println(errorMessage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,11 +131,15 @@ public class ServerFacade {
             JsonObject gameData = new JsonObject();
             gameData.addProperty("gameName", gameName);
 
-            String authToken1 = executeRequest(conn, gameData);
-            if (authToken1 != null) {
-                System.out.println("Game created successfully!");
+            String jsonData = new Gson().toJson(gameData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Game created");
                 return true;
-            }
+                }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -193,18 +201,23 @@ public class ServerFacade {
     public boolean joinGame(int gameID, String whiteOrBlack, String authToken) {
         try {
             HttpURLConnection conn = prepareConnection("/game", "PUT", true, "application/json");
+            conn.setRequestProperty("authorization", authToken);
 
             JsonObject joinGameData = new JsonObject();
             joinGameData.addProperty("playerColor", whiteOrBlack.toUpperCase());
-            int realID = -1;
-            if (farumAzula.containsKey(gameID)) {
-                realID = farumAzula.get(gameID);
+            int actualGameId = -1;
+            if(farumAzula.get(gameID) != null) {
+                actualGameId = farumAzula.get(gameID);
             }
-            joinGameData.addProperty("gameID", realID);
+            joinGameData.addProperty("gameID", actualGameId);
 
-            String authTokenResponse = executeRequest(conn, joinGameData);
-            if (authTokenResponse != null) {
-                System.out.println("Joined game successfully!");
+            String jsonData = new Gson().toJson(joinGameData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Joined game");
                 return true;
             }
         } catch (IOException e) {
@@ -226,9 +239,13 @@ public class ServerFacade {
             }
             joinObserverData.addProperty("gameID", realID);
 
-            String authTokenResponse = executeRequest(conn, joinObserverData);
-            if (authTokenResponse != null) {
-                System.out.println("Joined game as observer successfully!");
+            String jsonData = new Gson().toJson(joinObserverData);
+            conn.getOutputStream().write(jsonData.getBytes());
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Joined game as observer");
                 return true;
             }
         } catch (IOException e) {
