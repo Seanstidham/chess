@@ -1,6 +1,6 @@
 import chess.*;
 import ui.ChessClientUI;
-import java.rmi.ServerError;
+
 
 public class Main {
     public static void main(String[] args) {
