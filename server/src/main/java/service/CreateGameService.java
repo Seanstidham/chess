@@ -12,12 +12,12 @@ public class CreateGameService {
     //imma also have to make a request and result file, imma make all the files rn in fact
         private AuthDAO authDAO;
         private GameDAO gameDAO;
-        private int gameIDCounter;
+        private int gameCounter;
 
         public CreateGameService(GameDAO gameDAO, AuthDAO authDAO) {
             this.gameDAO = gameDAO;
             this.authDAO = authDAO;
-            this.gameIDCounter = 0;
+            this.gameCounter = 0;
         }
 
         public CreateGameResult createGame(String authToken, CreateGameRequest request) throws DataAccessException {
@@ -32,12 +32,12 @@ public class CreateGameService {
             if (request == null || request.gameName() == null) {
                 return new CreateGameResult(null, "Error: bad request");
             }
-            gameIDCounter++;
+            gameCounter++;
             //found the error, the games were being defaulted to 0 instead of 1 when it wasnt specified, thought I covered it but
             //i messed up the increment of it all
             ChessGame chessGame = new ChessGame();
 
-            GameData newGame = new GameData(gameIDCounter, null,null, request.gameName(), chessGame);
+            GameData newGame = new GameData(gameCounter, null,null, request.gameName(), chessGame);
             GameData createdGame = gameDAO.createGame(newGame);
 
 
