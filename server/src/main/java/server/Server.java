@@ -26,6 +26,9 @@ public class Server {
             gameDAO = new MemoryGameDAO();
             userDAO = new MemoryUserDAO();
         }
+        WebSocketHandler webSocketHandler = new WebSocketHandler(new WebsocketService(gameDAO, authDAO, userDAO));
+        Spark.webSocket("/connect", webSocketHandler);
+
         RegisterHandler registerHandler = new RegisterHandler(new RegisterService(userDAO, authDAO));
         Spark.post("/user", registerHandler::register);
 
@@ -48,8 +51,7 @@ public class Server {
         JoinGameHandler joinGameHandler = new JoinGameHandler(new JoinGameService(gameDAO, authDAO));
         Spark.put("/game", joinGameHandler::joinGame);
 
-        WebSocketHandler webSocketHandler = new WebSocketHandler(new WebsocketService(gameDAO, authDAO, userDAO));
-        Spark.webSocket("/connect", webSocketHandler);
+
 
         Spark.awaitInitialization();
         return Spark.port();
