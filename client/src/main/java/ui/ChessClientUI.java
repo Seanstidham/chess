@@ -1,5 +1,8 @@
 package ui;
 import java.util.Scanner;
+import chess.ChessGame;
+import com.google.gson.Gson;
+
 
 public class ChessClientUI {
     //okay so imma setup prelogin first
@@ -9,6 +12,9 @@ public class ChessClientUI {
     private static boolean isloggedIn = false;
     private static ServerFacade facade = new ServerFacade(8080);
     //okay now I should have everything
+    private static  Gson gson = new Gson();
+    private static ChessGame.TeamColor teamColor;
+    private static GameUI gameUI = null;
 
     public ChessClientUI() {
         preloginUI();
@@ -156,17 +162,25 @@ public class ChessClientUI {
         int gameDigits = Integer.parseInt(scanner.nextLine());
         System.out.println("Which color do you want to play as?: ");
         String playerColor = scanner.nextLine();
+
+        if (playerColor.equalsIgnoreCase("white")) {
+            teamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            teamColor = ChessGame.TeamColor.BLACK;
+        }
+
         if (facade.joinGame(gameDigits, playerColor, authToken)) {
-            GameUI.run(); //Calls the server join API to join the user to the game.
-            //ik i havent set it up ill get there
+            gameUI = new GameUI(teamColor, authToken, facade.farumAzula.get(gameDigits));
+            gameUI.run();
         }
     }
     //joinobserver
-    private static void joinObserver(String authtoken) {
+    private static void joinObserver(String authToken) {
         System.out.println("Enter the number of the game you want to join: ");
         int gameDigits = Integer.parseInt(scanner.nextLine());
-        if (facade.joinObserver(gameDigits, authtoken)) {
-            GameUI.run();
+        if (facade.joinObserver(gameDigits, authToken)) {
+            gameUI = new GameUI(null, authToken, facade.farumAzula.get(gameDigits));
+            gameUI.run();
         }
     }
 

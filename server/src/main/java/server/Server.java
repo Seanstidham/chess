@@ -48,7 +48,8 @@ public class Server {
         JoinGameHandler joinGameHandler = new JoinGameHandler(new JoinGameService(gameDAO, authDAO));
         Spark.put("/game", joinGameHandler::joinGame);
 
-        Spark.webSocket("/connect",WebSocketHandler.class);
+        WebSocketHandler webSocketHandler = new WebSocketHandler(new WebsocketService(gameDAO, authDAO, userDAO));
+        Spark.webSocket("/connect", webSocketHandler);
 
         Spark.awaitInitialization();
         return Spark.port();

@@ -10,13 +10,9 @@ import java.util.HashMap;
 
 
 public class WebSocketSessions {
-    private HashMap<Integer, HashMap<String, Session>> sessions;
+    private static HashMap<Integer, HashMap<String, Session>> sessions = new HashMap<>();
 
-    public WebSocketSessions() {
-        sessions = new HashMap<Integer, HashMap<String, Session>>();
-    }
-
-    public synchronized void addSessionToGame(int gameID, String authToken, Session session) {
+    public synchronized void addsessiontoGame(int gameID, String authToken, Session session) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes == null) {
             numgameSeshes = new HashMap<>();
@@ -25,7 +21,7 @@ public class WebSocketSessions {
         numgameSeshes.put(authToken, session);
     }
 
-    public synchronized void removeSessionFromGame(int gameID, String authToken) {
+    public synchronized void removesessionfromGame(int gameID, String authToken) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes != null) {
             numgameSeshes.remove(authToken);
