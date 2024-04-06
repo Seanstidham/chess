@@ -99,7 +99,7 @@ public class WebsocketService {
             String userName = authDAO.getAuth(authToken).username();
             int gameID = makeMoveCommand.getGameID();
             ChessGame game = gameDAO.getGame(gameID).game();
-            ChessMove move = makeMoveCommand.getActualMove();
+            ChessMove move = makeMoveCommand.getMove();
             ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
             ChessGame.TeamColor userColor = null;
 
@@ -147,7 +147,7 @@ public class WebsocketService {
 
             LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
 
-            NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getActualMove().getEndPosition()));
+            NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
 
             sessions.sendMessage(gameID, notificationToRootClient, authToken);
             sessions.broadcastMessage(gameID, notificationToRootClient, authToken);

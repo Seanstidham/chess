@@ -14,12 +14,12 @@ public class MakeMoveCommand extends UserGameCommand{
 // The commandType field must be set to the corresponding CommandType.
 
     int gameID;
-    ChessMove actualMove;
+    ChessMove move;
 
-    public MakeMoveCommand(int gameID, ChessMove actualMove, String authToken) {
+    public MakeMoveCommand(int gameID, ChessMove move, String authToken) {
         super(authToken);
         this.gameID = gameID;
-        this.actualMove = actualMove;
+        this.move = move;
         this.commandType = CommandType.MAKE_MOVE;
     }
 
@@ -27,7 +27,7 @@ public class MakeMoveCommand extends UserGameCommand{
         return gameID;
     }
 
-    public ChessMove getActualMove() {
-        return actualMove;
+    public ChessMove getMove() {
+        return move;
     }
 }
