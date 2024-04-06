@@ -13,6 +13,7 @@ public class ChessGame {
     // so first time to take care of the privates
     private TeamColor teamTurn;
     private ChessBoard chessBoard;
+    ChessMove thelastMove;
 
 
     public ChessGame() {
@@ -23,7 +24,7 @@ public class ChessGame {
         //now i need to set the first turn to white
         teamTurn = TeamColor.WHITE;
         //and finally reset the last_move storage
-
+        thelastMove = null;
 
     }
 
@@ -32,6 +33,9 @@ public class ChessGame {
      */
     public TeamColor getTeamTurn() {
         return teamTurn;
+    }
+    public ChessMove getLastMove() {
+        return thelastMove;
     }
 
     /**
@@ -42,6 +46,10 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         this.teamTurn = team;
     }
+    public void setLastMove(ChessMove move) {
+        this.thelastMove = move;
+    }
+
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -154,6 +162,7 @@ public class ChessGame {
 
         //set the last_move
         currPiece.setMoved();
+        thelastMove = move;
 
         // now update the team turn
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
