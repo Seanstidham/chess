@@ -5,14 +5,10 @@ import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.ServerMessage;
 import java.io.IOException;
 import java.util.HashMap;
-
-
-
-
 public class WebSocketSessions {
     private static HashMap<Integer, HashMap<String, Session>> sessions = new HashMap<>();
 
-    public synchronized void addsessiontoGame(int gameID, String authToken, Session session) {
+    public void addsessiontoGame(int gameID, String authToken, Session session) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes == null) {
             numgameSeshes = new HashMap<>();
@@ -21,7 +17,7 @@ public class WebSocketSessions {
         numgameSeshes.put(authToken, session);
     }
 
-    public synchronized void removesessionfromGame(int gameID, String authToken) {
+    public void removesessionfromGame(int gameID, String authToken) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes != null) {
             numgameSeshes.remove(authToken);
@@ -37,7 +33,7 @@ public class WebSocketSessions {
         }
     }
 
-    public synchronized void sendMessage(int gameID, ServerMessage message, String authToken) {
+    public void sendMessage(int gameID, ServerMessage message, String authToken) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes != null) {
             Session targetSession = numgameSeshes.get(authToken);
@@ -47,7 +43,7 @@ public class WebSocketSessions {
         }
     }
 
-    public synchronized void broadcastMessage(int gameID, ServerMessage message, String exceptThisAuthToken) {
+    public void broadcastMessage(int gameID, ServerMessage message, String exceptThisAuthToken) {
         HashMap<String, Session> numgameSeshes = sessions.get(gameID);
         if (numgameSeshes != null) {
             for (HashMap.Entry<String, Session> entry : numgameSeshes.entrySet()) {
