@@ -218,11 +218,14 @@ public class WebsocketService {
         int gameID = resignCommand.getGameID();
         String notificationMessage = userName + " has given up.";
         NotificationMessage notification = new NotificationMessage(notificationMessage);
+        NotificationMessage notification1 = new NotificationMessage("You resigned the game.");
 
         // 🫸🔴🔵🫷🤌🫴☰🟣 Hollow Purple
         try {
             if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName) || Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
+                sessions.sendMessage(gameID, notification1, authToken);
                 handleGameAction(authToken, gameID, userName, notification, session);
+
             } else {
                 sessions.sendMessage(gameID, new ErrorMessage("Cannot resign as an Observer."), authToken);
             }
