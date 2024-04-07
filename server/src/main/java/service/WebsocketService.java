@@ -169,7 +169,7 @@ public class WebsocketService {
             throw new RuntimeException(e);
         }
     }
-    public void handleGameAction(String authToken, int gameID, String userName, NotificationMessage notification, Session session) throws IOException {
+    public void handlegameAction(String authToken, int gameID, String userName, NotificationMessage notification, Session session) throws DataAccessException {
         sessions.addsessiontoGame(gameID, authToken, session);
 
         if (!isValidAuthToken(authToken)) {
@@ -204,11 +204,15 @@ public class WebsocketService {
             throw new RuntimeException(e);
         }
 
-        handleGameAction(authToken, gameID, userName, notification, session);
+        try {
+            handlegameAction(authToken, gameID, userName, notification, session);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public void resignGame(String authToken, ResignCommand resignCommand, Session session) throws IOException {
+    public void resignGame(String authToken, ResignCommand resignCommand, Session session) throws DataAccessException {
         String userName;
         try {
             userName = authDAO.getAuth(authToken).username();
@@ -216,6 +220,14 @@ public class WebsocketService {
             throw new RuntimeException(e);
         }
         int gameID = resignCommand.getGameID();
+        ChessGame game = gameDAO.getGame(gameID).game();
+
+        if(game.getTeamTurn() == null) {
+            sessions.sendMessage(gameID, new ErrorMessage("Game already over."), authToken);
+            return;
+        }
+        game.setTeamTurn(null);
+        gameDAO.updatedGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
         String notificationMessage = userName + " has given up.";
         NotificationMessage notification = new NotificationMessage(notificationMessage);
         NotificationMessage notification1 = new NotificationMessage("You resigned the game.");
@@ -224,7 +236,7 @@ public class WebsocketService {
         try {
             if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName) || Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
                 sessions.sendMessage(gameID, notification1, authToken);
-                handleGameAction(authToken, gameID, userName, notification, session);
+                handlegameAction(authToken, gameID, userName, notification, session);
 
             } else {
                 sessions.sendMessage(gameID, new ErrorMessage("Cannot resign as an Observer."), authToken);
@@ -234,12 +246,8 @@ public class WebsocketService {
         }
     }
 
-    private boolean isValidAuthToken(String authToken) throws IOException {
-        try {
+    private boolean isValidAuthToken(String authToken) throws DataAccessException {
             return authDAO.getAuth(authToken) != null;
-        } catch (DataAccessException e) {
-            throw new IOException(e);
-        }
     }
 
     private String positionToString(ChessPosition position) {

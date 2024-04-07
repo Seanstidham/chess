@@ -1,4 +1,5 @@
 package handler;
+import dataAccess.DataAccessException;
 import service.*;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.*;
@@ -32,7 +33,11 @@ public class WebSocketHandler {
             websocketService.leaveGame(leaveCommand.getAuthString(), leaveCommand, session);
         } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
-            websocketService.resignGame(resignCommand.getAuthString(), resignCommand, session);
+            try {
+                websocketService.resignGame(resignCommand.getAuthString(), resignCommand, session);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
