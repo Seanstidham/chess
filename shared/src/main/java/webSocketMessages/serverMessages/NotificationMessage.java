@@ -9,14 +9,14 @@ public class NotificationMessage extends ServerMessage  {
 //    Description
 //    This is a message meant to inform a player when another player made an action.
 
-    String notificationMessage;
+    String message;
 
-    public NotificationMessage(String notificationMessage) {
+    public NotificationMessage(String message) {
         super(ServerMessageType.NOTIFICATION);
-        this.notificationMessage = notificationMessage;
+        this.message = message;
     }
 
     public String getNotificationMessage() {
-        return notificationMessage;
+        return message;
     }
 }
