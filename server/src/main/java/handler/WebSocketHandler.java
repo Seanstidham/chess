@@ -21,20 +21,22 @@ public class WebSocketHandler {
         UserGameCommand gameCommand = new Gson().fromJson(message, UserGameCommand.class);
         if (gameCommand.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER) {
             JoinPlayerCommand joinPlayerCommand = gson.fromJson(message, JoinPlayerCommand.class);
-            websocketService.joinPlayer(joinPlayerCommand.getAuthString(), joinPlayerCommand, session);
+            websocketService.joinPlayer(gameCommand.getAuthString(), joinPlayerCommand, session);
         } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
             JoinObserverCommand joinObserverCommand = gson.fromJson(message, JoinObserverCommand.class);
-            websocketService.joinObserver(joinObserverCommand.getAuthString(), joinObserverCommand, session);
+            websocketService.joinObserver(gameCommand.getAuthString(), joinObserverCommand, session);
+
         } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
             MakeMoveCommand makeMoveCommand = gson.fromJson(message, MakeMoveCommand.class);
-            websocketService.makeMove(makeMoveCommand.getAuthString(), makeMoveCommand, session);
+            websocketService.makeMove(gameCommand.getAuthString(), makeMoveCommand, session);
+
         } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
             LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
-            websocketService.leaveGame(leaveCommand.getAuthString(), leaveCommand, session);
+            websocketService.leaveGame(gameCommand.getAuthString(), leaveCommand, session);
         } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
             try {
-                websocketService.resignGame(resignCommand.getAuthString(), resignCommand, session);
+                websocketService.resignGame(gameCommand.getAuthString(), resignCommand, session);
             } catch (DataAccessException e) {
                 throw new RuntimeException(e);
             }

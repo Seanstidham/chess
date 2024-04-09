@@ -25,7 +25,7 @@ public class WebSocketFacade extends Endpoint{
             this.session = container.connectToServer(this, websocketURI);
             initMessageHandler();
         } catch (URISyntaxException | DeploymentException | IOException e) {
-            e.printStackTrace();
+            handleWebSocketException(e);
         }
     }
 
@@ -42,17 +42,23 @@ public class WebSocketFacade extends Endpoint{
         Gson gson = new Gson();
         ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
 
-        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
-            gameHandler.printMessage(notificationMessage);
-        } else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
-            gameHandler.updateGame(loadGameMessage);
+        switch (serverMessage.getServerMessageType()) {
+            case NOTIFICATION:
+                NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
+                gameHandler.printMessage(notificationMessage);
+                break;
+            case LOAD_GAME:
+                LoadGameMessage loadGameMessage = gson.fromJson(message, LoadGameMessage.class);
+                gameHandler.updateGame(loadGameMessage);
+                break;
+            default:
+
+                break;
         }
     }
 
     @Override
-    public void onOpen(Session session, EndpointConfig endpointConfig){
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
     public void joinPlayer(String authToken, int gameID, ChessGame.TeamColor teamColor) {
@@ -64,12 +70,13 @@ public class WebSocketFacade extends Endpoint{
     }
 
     public void makeMove(int gameID, ChessMove move, String authToken) {
-        sendMessage(new MakeMoveCommand(gameID, move, authToken));
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(gameID, move, authToken);
+        sendMessage(makeMoveCommand);
     }
 
-    public void leave(int gameID, String authToken) throws IOException {
+    public void leave(int gameID, String authToken) {
         sendMessage(new LeaveCommand(gameID, authToken));
-        this.session.close();
+        closeSession();
     }
 
     public void resign(int gameID, String authToken) {
@@ -78,9 +85,24 @@ public class WebSocketFacade extends Endpoint{
 
     private void sendMessage(UserGameCommand command) {
         try {
-            session.getBasicRemote().sendText(new Gson().toJson(command));
+        session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
-            e.printStackTrace();
+            handleWebSocketException(e);
         }
+    }
+
+    private void closeSession() {
+        if (session != null && session.isOpen()) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                handleWebSocketException(e);
+            }
+        }
+    }
+
+    private void handleWebSocketException(Exception e) {
+
+        e.printStackTrace();
     }
 }

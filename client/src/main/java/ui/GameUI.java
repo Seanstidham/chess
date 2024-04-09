@@ -9,30 +9,37 @@ import webSocketMessages.serverMessages.NotificationMessage;
 
 public class GameUI implements GameHandler{
 // Okay time to scrap everything and start implementing GameHandler
-    static ChessGame game;
-    static ChessBoard mancalaBoard;
+    static ChessGame game = new ChessGame();
+    private static ChessBoard testBoard = new ChessBoard();
     static Scanner scanner = new Scanner(System.in);
     static String BASE_URL = "http://localhost:8080";
     static String GAME_MESSAGE = "[JOINED-GAME] >>>";
     static Gson gson = new Gson();
-    ChessGame.TeamColor teamColor;
+    static ChessGame.TeamColor teamColor;
     int gameID;
     static String authToken;
-    WebSocketFacade socket = new WebSocketFacade(BASE_URL, GameUI.this);
+    WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
 
     public GameUI(ChessGame.TeamColor teamColor, String authToken, int gameID) {
-        this.teamColor = teamColor;
+        GameUI.teamColor = teamColor;
         GameUI.authToken = authToken;
         this.gameID = gameID;
     }
 
     public void run() {
        boolean isyourrefridgeratorrunning = true;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            testBoard.resetBoard();
+            chessboardWhite(testBoard);
+        } else if (teamColor == ChessGame.TeamColor.BLACK) {
+            testBoard.resetBoard();
+            chessboardBlack(testBoard);
+        }
        printinitOptions();
        if (teamColor == null) {
-           socket.joinObserver(gameID, authToken);
+           ws.joinObserver(gameID, authToken);
        } else {
-           socket.joinPlayer(authToken, gameID, teamColor);
+           ws.joinPlayer(authToken, gameID, teamColor);
        }
        while (isyourrefridgeratorrunning) {
            System.out.print(GAME_MESSAGE);
@@ -45,11 +52,11 @@ public class GameUI implements GameHandler{
                leave();
                isyourrefridgeratorrunning = false;
            } else if ("4".equals(playerInput) || "move".equals(playerInput)) {
-               makeMove();
+               makeMove(testBoard);
            } else if ("5".equals(playerInput) || "resign".equals(playerInput)) {
                resign();
            } else if ("6".equals(playerInput) || "legal moves".equals(playerInput)) {
-               displayLegalMoves();
+               displayLegalMoves(testBoard);
            }
        }
     }
@@ -75,22 +82,18 @@ public class GameUI implements GameHandler{
 
     private void reDrawBoard() {
         if (teamColor == ChessGame.TeamColor.WHITE) {
-            chessboardWhite(mancalaBoard);
+            chessboardWhite(testBoard);
         } else if (teamColor == ChessGame.TeamColor.BLACK) {
-            chessboardBlack(mancalaBoard);
+            chessboardBlack(testBoard);
         } else {
-            chessboardWhite(mancalaBoard);
+            chessboardWhite(testBoard);
         }
     }
     private void leave() {
-        try {
-            socket.leave(gameID, authToken);
-            System.out.println("You are alone now.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ws.leave(gameID, authToken);
+        System.out.println("You are alone now.");
     }
-    private void makeMove() {
+    private void makeMove(ChessBoard board) {
         if (teamColor == null) {
             System.out.println("Cannot make move as observer");
             return;
@@ -129,7 +132,7 @@ public class GameUI implements GameHandler{
         String row = scanner.nextLine().toLowerCase();
         int rowVal = Integer.parseInt(row);
 
-        ChessPiece piece = mancalaBoard.getPiece(new ChessPosition(rowVal, colVal));
+        ChessPiece piece = board.getPiece(new ChessPosition(rowVal, colVal));
 
         if (piece == null) {
             System.out.println("No piece on that square");
@@ -209,13 +212,13 @@ public class GameUI implements GameHandler{
             }
         }
 
-        socket.makeMove(gameID, newMove, authToken);
+        ws.makeMove(gameID, newMove, authToken);
     }
     private void resign() {
         System.out.println("Are you sure you want to resign? (Y/N)");
         String answer = scanner.nextLine().toLowerCase();
         if ("y".equals(answer)) {
-            socket.resign(gameID, authToken);
+            ws.resign(gameID, authToken);
             game.setTeamTurn(null);
             System.out.println("You have resigned.");
         } else if ("n".equals(answer)) {
@@ -224,7 +227,7 @@ public class GameUI implements GameHandler{
             System.out.println("Invalid input. Please enter 'Y' or 'N'.");
         }
     }
-    private void displayLegalMoves() {
+    private void displayLegalMoves(ChessBoard board) {
         System.out.println("Enter Column: ");
         String column = scanner.nextLine().toLowerCase();
         int colnum = avoidingDuplication(column);
@@ -240,7 +243,8 @@ public class GameUI implements GameHandler{
         }
 
         ChessPosition position = new ChessPosition(rowVal, colnum);
-        ChessPiece piece = mancalaBoard.getPiece(position);
+        ChessPiece piece = board.getPiece(position);
+
 
         if (piece == null) {
             System.out.println("No piece on the board");
@@ -248,6 +252,7 @@ public class GameUI implements GameHandler{
         }
 
         Collection<ChessMove> validMoves = game.validMoves(position);
+
 
         if (validMoves.isEmpty()) {
             System.out.println("No legal moves available for this piece.");
@@ -271,7 +276,7 @@ public class GameUI implements GameHandler{
                     } else {
                         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     }
-                    ChessPiece currentPiece = mancalaBoard.getPiece(currentPosition);
+                    ChessPiece currentPiece = board.getPiece(currentPosition);
 
                     String textColor;
                     if (currentPiece == null) {
@@ -353,52 +358,49 @@ public class GameUI implements GameHandler{
         }
         return " " + pieceSymbol + " ";
     }
-    private static void chessboardWhite(ChessBoard board) {
-        System.out.println("  a  b  c  d  e  f  g  h ");
-        int j = 8;
-        while (j >= 1) {
-            System.out.print(j + " ");
-            int i = 1;
-            while (i <= 8) {
-                ChessPiece thechosenPiece = board.getPiece(new ChessPosition(j, i));
+    public static void chessboardWhite(ChessBoard board) {
+        System.out.println("   a  b  c  d  e  f  g  h ");
+        for (int i = 8; i >= 1; i--) {
+            System.out.print(i + " ");
+
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 String textColor;
-                if (thechosenPiece == null) {
+                if (piece == null){
                     textColor = "";
-                } else if (thechosenPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                } else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                     textColor = EscapeSequences.SET_TEXT_COLOR_BLUE;
                 } else {
                     textColor = EscapeSequences.SET_TEXT_COLOR_RED;
                 }
-                if ((j + i) % 2 == 0) {
-                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + textColor + pieceType(thechosenPiece));
+                if ((i + j) % 2 == 0) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY + textColor + pieceType(piece));
                 } else {
-                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + textColor + pieceType(thechosenPiece));
+                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + textColor + pieceType(piece));
                 }
-                i++;
             }
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.println(EscapeSequences.SET_TEXT_COLOR_WHITE);
-            j--;
         }
-        System.out.println("  a  b  c  d  e  f  g  h ");
+        System.out.println("   a  b  c  d  e  f  g  h ");
     }
     @Override
     public void updateGame(LoadGameMessage game) {
         Object updatedGame = game.getGame();
         ChessGame chessGame = gson.fromJson(updatedGame.toString(), ChessGame.class);
         System.out.println("RECEIVED GAME MESSAGE");
-        this.game = chessGame;
-        this.mancalaBoard = chessGame.getBoard();
+        GameUI.game = chessGame;
+        testBoard = chessGame.getBoard();
         if(this.game.isInCheckmate(ChessGame.TeamColor.WHITE) || this.game.isInCheckmate(ChessGame.TeamColor.BLACK)
                 || this.game.isInStalemate(ChessGame.TeamColor.WHITE) || this.game.isInStalemate(ChessGame.TeamColor.BLACK)) {
             this.game.setTeamTurn(null);
         }
         if(teamColor == ChessGame.TeamColor.WHITE) {
-            chessboardWhite(mancalaBoard);
+            chessboardWhite(testBoard);
         } else if (teamColor == ChessGame.TeamColor.BLACK){
-            chessboardBlack(mancalaBoard);
+            chessboardBlack(testBoard);
         } else {
-            chessboardWhite(mancalaBoard);
+            chessboardWhite(testBoard);
         }
         System.out.print("[IN-GAME] >>> ");
     }
