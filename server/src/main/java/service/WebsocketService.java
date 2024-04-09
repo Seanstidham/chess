@@ -74,20 +74,17 @@ public class WebsocketService {
                 sessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining: Unauthorized"), authToken);
                 return;
             }
-
             int gameID = joinObserverCommand.getGameID();
             if (gameDAO.getGame(gameID) == null) {
                 sessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining: Unauthorized"), authToken);
                 return;
             }
             ChessGame game = gameDAO.getGame(gameID).game();
-            LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
-
+            LoadGameMessage notificationClient = new LoadGameMessage(game);
             String userName = authDAO.getAuth(authToken).username();
-
             NotificationMessage notification = new NotificationMessage(userName + " joined as observer.");
 
-            sessions.sendMessage(gameID, notificationToRootClient, authToken);
+            sessions.sendMessage(gameID, notificationClient, authToken);
             sessions.broadcastMessage(gameID, notification, authToken);
         } catch (DataAccessException e) {
             throw new IOException(e);
@@ -129,12 +126,12 @@ public class WebsocketService {
             }
 
             if (game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                handleGameEnd("Checkmate", game, gameID, sessions, authToken, gameDAO);
+                handlegameEnd("Checkmate", game, gameID, sessions, authToken, gameDAO);
                 return;
             }
 
             if (game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
-                handleGameEnd("Stalemate", game, gameID, sessions, authToken, gameDAO);
+                handlegameEnd("Stalemate", game, gameID, sessions, authToken, gameDAO);
                 return;
             }
 
@@ -156,7 +153,7 @@ public class WebsocketService {
             throw new IOException(e);
         }
     }
-    public void handleGameEnd(String message, ChessGame game, int gameID, WebSocketSessions sessions, String authToken, GameDAO gameDAO) {
+    public void handlegameEnd(String message, ChessGame game, int gameID, WebSocketSessions sessions, String authToken, GameDAO gameDAO) {
         sessions.sendMessage(gameID, new NotificationMessage(message), authToken);
         sessions.broadcastMessage(gameID, new NotificationMessage(message), authToken);
         game.setTeamTurn(null);
@@ -230,7 +227,7 @@ public class WebsocketService {
         gameDAO.updatedGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
         String notificationMessage = userName + " has given up.";
         NotificationMessage notification = new NotificationMessage(notificationMessage);
-        NotificationMessage notification1 = new NotificationMessage("You resigned the game.");
+        NotificationMessage notification1 = new NotificationMessage("You have given up");
 
         // 🫸🔴🔵🫷🤌🫴☰🟣 Hollow Purple
         try {

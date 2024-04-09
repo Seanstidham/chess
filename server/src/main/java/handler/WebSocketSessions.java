@@ -38,7 +38,7 @@ public class WebSocketSessions {
         if (numgameSeshes != null) {
             Session targetSession = numgameSeshes.get(authToken);
             if (targetSession != null && targetSession.isOpen()) {
-                sendToSession(targetSession, message);
+                sendtoSession(targetSession, message);
             }
         }
     }
@@ -51,14 +51,14 @@ public class WebSocketSessions {
                 if (!authToken.equals(exceptThisAuthToken)) {
                     Session targetSession = entry.getValue();
                     if (targetSession.isOpen()) {
-                        sendToSession(targetSession, message);
+                        sendtoSession(targetSession, message);
                     }
                 }
             }
         }
     }
 
-    private void sendToSession(Session session, ServerMessage message) {
+    private void sendtoSession(Session session, ServerMessage message) {
         RemoteEndpoint remote = session.getRemote();
         try {
             remote.sendString(new Gson().toJson(message));

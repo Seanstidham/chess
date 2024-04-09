@@ -21,15 +21,15 @@ public class WebSocketFacade extends Endpoint{
         this.gameHandler = gameHandler;
         try {
             URI websocketURI = new URI(url.replace("http", "ws") + "/connect");
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.session = container.connectToServer(this, websocketURI);
-            initMessageHandler();
+            WebSocketContainer socketContainer = ContainerProvider.getWebSocketContainer();
+            this.session = socketContainer.connectToServer(this, websocketURI);
+            initmessageHandler();
         } catch (URISyntaxException | DeploymentException | IOException e) {
             handleWebSocketException(e);
         }
     }
 
-    private void initMessageHandler() {
+    private void initmessageHandler() {
         session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
             public void onMessage(String message) {
@@ -87,7 +87,7 @@ public class WebSocketFacade extends Endpoint{
         try {
         session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
-            handleWebSocketException(e);
+            handlewebsocketException(e);
         }
     }
 
@@ -96,12 +96,12 @@ public class WebSocketFacade extends Endpoint{
             try {
                 session.close();
             } catch (IOException e) {
-                handleWebSocketException(e);
+                handlewebsocketException(e);
             }
         }
     }
 
-    private void handleWebSocketException(Exception e) {
+    private void handlewebsocketException(Exception e) {
 
         e.printStackTrace();
     }

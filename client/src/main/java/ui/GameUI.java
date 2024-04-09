@@ -1,7 +1,6 @@
 package ui;
 import chess.*;
 import com.google.gson.Gson;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Scanner;
 import webSocketMessages.serverMessages.LoadGameMessage;
@@ -18,7 +17,7 @@ public class GameUI implements GameHandler{
     static ChessGame.TeamColor teamColor;
     int gameID;
     static String authToken;
-    WebSocketFacade ws = new WebSocketFacade(BASE_URL, GameUI.this);
+    WebSocketFacade sockets = new WebSocketFacade(BASE_URL, GameUI.this);
 
     public GameUI(ChessGame.TeamColor teamColor, String authToken, int gameID) {
         GameUI.teamColor = teamColor;
@@ -37,17 +36,17 @@ public class GameUI implements GameHandler{
         }
        printinitOptions();
        if (teamColor == null) {
-           ws.joinObserver(gameID, authToken);
+           sockets.joinObserver(gameID, authToken);
        } else {
-           ws.joinPlayer(authToken, gameID, teamColor);
+           sockets.joinPlayer(authToken, gameID, teamColor);
        }
        while (isyourrefridgeratorrunning) {
            System.out.print(GAME_MESSAGE);
            String playerInput = scanner.nextLine().toLowerCase();
            if ("1".equals(playerInput) || "help".equals(playerInput)) {
-               displayHelpText();
+               displayhelpText();
            } else if ("2".equals(playerInput) || "redraw".equals(playerInput)) {
-               reDrawBoard();
+               redrawBoard();
            } else if ("3".equals(playerInput) || "leave".equals(playerInput)) {
                leave();
                isyourrefridgeratorrunning = false;
@@ -56,7 +55,7 @@ public class GameUI implements GameHandler{
            } else if ("5".equals(playerInput) || "resign".equals(playerInput)) {
                resign();
            } else if ("6".equals(playerInput) || "legal moves".equals(playerInput)) {
-               displayLegalMoves(testBoard);
+               displaylegalMoves(testBoard);
            }
        }
     }
@@ -71,7 +70,7 @@ public class GameUI implements GameHandler{
         System.out.println("5. Resign");
         System.out.println("6. Highlight Legal Moves");
     }
-    private static void displayHelpText() {
+    private static void displayhelpText() {
         System.out.println("Help - Possible commands");
         System.out.println("Redraw - Reprint the Chess Board");
         System.out.println("Leave - Exit Game, quit playing chess");
@@ -80,7 +79,7 @@ public class GameUI implements GameHandler{
         System.out.println("Legal Moves - Enter a piece and show where it can move");
     }
 
-    private void reDrawBoard() {
+    private void redrawBoard() {
         if (teamColor == ChessGame.TeamColor.WHITE) {
             chessboardWhite(testBoard);
         } else if (teamColor == ChessGame.TeamColor.BLACK) {
@@ -90,7 +89,7 @@ public class GameUI implements GameHandler{
         }
     }
     private void leave() {
-        ws.leave(gameID, authToken);
+        sockets.leave(gameID, authToken);
         System.out.println("You are alone now.");
     }
     private void makeMove(ChessBoard board) {
@@ -212,40 +211,34 @@ public class GameUI implements GameHandler{
             }
         }
 
-        ws.makeMove(gameID, newMove, authToken);
+        sockets.makeMove(gameID, newMove, authToken);
     }
     private void resign() {
         System.out.println("Are you sure you want to resign? (Y/N)");
         String answer = scanner.nextLine().toLowerCase();
         if ("y".equals(answer)) {
-            ws.resign(gameID, authToken);
+            sockets.resign(gameID, authToken);
             game.setTeamTurn(null);
-            System.out.println("You have resigned.");
+            System.out.println("You have given up");
         } else if ("n".equals(answer)) {
             System.out.println("Continuing with the game.");
         } else {
             System.out.println("Invalid input. Please enter 'Y' or 'N'.");
         }
     }
-    private void displayLegalMoves(ChessBoard board) {
+    private void displaylegalMoves(ChessBoard board) {
         System.out.println("Enter Column: ");
         String column = scanner.nextLine().toLowerCase();
         int colnum = avoidingDuplication(column);
-
-
         System.out.println("Enter Row: ");
         String row = scanner.nextLine().toLowerCase();
         int rowVal = Integer.parseInt(row);
-
         if (rowVal < 1 || rowVal > 8) {
             System.out.println("Incorrect input on the board");
             return;
         }
-
         ChessPosition position = new ChessPosition(rowVal, colnum);
         ChessPiece piece = board.getPiece(position);
-
-
         if (piece == null) {
             System.out.println("No piece on the board");
             return;
@@ -262,31 +255,31 @@ public class GameUI implements GameHandler{
                 System.out.print(i + " ");
                 for (int j = 1; j <= 8; j++) {
                     ChessPosition currentPosition = new ChessPosition(i, j);
-                    boolean isLegalMove = false;
+                    boolean moveLegal = false;
                     for (ChessMove move : validMoves) {
                         if (move.getEndPosition().equals(currentPosition)) {
-                            isLegalMove = true;
+                            moveLegal = true;
                             break;
                         }
                     }
-                    if (isLegalMove) {
+                    if (moveLegal) {
                         System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
                     } else if ((i + j) % 2 == 0) {
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
                     } else {
                         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     }
-                    ChessPiece currentPiece = board.getPiece(currentPosition);
+                    ChessPiece currPiece = board.getPiece(currentPosition);
 
                     String textColor;
-                    if (currentPiece == null) {
+                    if (currPiece == null) {
                         textColor = "";
-                    } else if (currentPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    } else if (currPiece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         textColor = EscapeSequences.SET_TEXT_COLOR_BLUE;
                     } else {
                         textColor = EscapeSequences.SET_TEXT_COLOR_RED;
                     }
-                    System.out.print(textColor + pieceType(currentPiece));
+                    System.out.print(textColor + pieceType(currPiece));
                 }
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_WHITE);
