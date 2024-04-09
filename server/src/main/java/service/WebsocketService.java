@@ -8,14 +8,13 @@ import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.userCommands.*;
-
 import java.io.IOException;
 import java.util.Objects;
 
 public class WebsocketService {
     private AuthDAO authDAO;
     private GameDAO gameDAO;
-    private UserDAO userDAO;
+    private UserDAO userDAO; //looks dead but isnt
     private WebSocketSessions sessions;
 
     public WebsocketService(GameDAO gameDAO, AuthDAO authDAO, UserDAO userDAO) {
@@ -67,9 +66,8 @@ public class WebsocketService {
     }
 
     public void joinObserver(String authToken, JoinObserverCommand joinObserverCommand, Session session) throws IOException {
-        try {
+        try { // add the session and then the gameID
             sessions.addsessiontoGame(joinObserverCommand.getGameID(), joinObserverCommand.getAuthString(), session);
-
             if (!isValidAuthToken(authToken)) {
                 sessions.sendMessage(joinObserverCommand.getGameID(), new ErrorMessage("Error joining: Unauthorized"), authToken);
                 return;
@@ -80,11 +78,10 @@ public class WebsocketService {
                 return;
             }
             ChessGame game = gameDAO.getGame(gameID).game();
-            LoadGameMessage notificationClient = new LoadGameMessage(game);
+            LoadGameMessage notificationMessage = new LoadGameMessage(game); //be able to notify the client
             String userName = authDAO.getAuth(authToken).username();
-            NotificationMessage notification = new NotificationMessage(userName + " joined as observer.");
-
-            sessions.sendMessage(gameID, notificationClient, authToken);
+            NotificationMessage notification = new NotificationMessage(userName + " joined as observer"); //need to be named notification or everything breaks (found out the hard way)
+            sessions.sendMessage(gameID, notificationMessage, authToken);
             sessions.broadcastMessage(gameID, notification, authToken);
         } catch (DataAccessException e) {
             throw new IOException(e);
@@ -99,9 +96,7 @@ public class WebsocketService {
             ChessMove move = makeMoveCommand.getMove();
             ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
             ChessGame.TeamColor userColor = null;
-
             sessions.addsessiontoGame(makeMoveCommand.getGameID(), makeMoveCommand.getAuthString(), session);
-
             if (!isValidAuthToken(authToken)) {
                 sessions.sendMessage(makeMoveCommand.getGameID(), new ErrorMessage("Error: Unauthorized"), authToken);
                 return;
@@ -111,43 +106,34 @@ public class WebsocketService {
             } else if (Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
                 userColor = ChessGame.TeamColor.BLACK;
             }
-
             try {
-                game.makeMove(move);
+                game.makeMove(move); //my joy and my failure, as this will let you type but will not actually make the move
             } catch (InvalidMoveException e) {
                 sessions.sendMessage(gameID, new ErrorMessage("Invalid move"), authToken);
                 return;
             }
-
             if (game.isInCheck(ChessGame.TeamColor.BLACK) || game.isInCheck(ChessGame.TeamColor.WHITE)) {
                 sessions.sendMessage(gameID, new NotificationMessage("Check"), authToken);
                 sessions.broadcastMessage(gameID, new NotificationMessage("Check"), authToken);
                 gameDAO.updatedGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
             }
-
             if (game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
                 handlegameEnd("Checkmate", game, gameID, sessions, authToken, gameDAO);
                 return;
             }
-
             if (game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(ChessGame.TeamColor.WHITE)) {
                 handlegameEnd("Stalemate", game, gameID, sessions, authToken, gameDAO);
                 return;
             }
-
             if (piece.getTeamColor() != userColor) {
                 sessions.sendMessage(gameID, new ErrorMessage("Piece is immovable"), authToken); //Just like your mother gottem
                 return;
             }
-
             gameDAO.updatedGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
-
-            LoadGameMessage notificationToRootClient = new LoadGameMessage(game);
-
+            LoadGameMessage notificationMessage = new LoadGameMessage(game);
             NotificationMessage notification = new NotificationMessage(userName + " moved to " + positionToString(makeMoveCommand.getMove().getEndPosition()));
-
-            sessions.sendMessage(gameID, notificationToRootClient, authToken);
-            sessions.broadcastMessage(gameID, notificationToRootClient, authToken);
+            sessions.sendMessage(gameID, notificationMessage, authToken);
+            sessions.broadcastMessage(gameID, notificationMessage, authToken);
             sessions.broadcastMessage(gameID, notification, authToken);
         } catch (DataAccessException e) {
             throw new IOException(e);
@@ -168,19 +154,17 @@ public class WebsocketService {
     }
     public void handlegameAction(String authToken, int gameID, String userName, NotificationMessage notification, Session session) throws DataAccessException {
         sessions.addsessiontoGame(gameID, authToken, session);
-
         if (!isValidAuthToken(authToken)) {
             sessions.sendMessage(gameID, new ErrorMessage("Error: Unauthorized"), authToken);
             return;
         }
-
         sessions.broadcastMessage(gameID, notification, authToken);
         sessions.removesessionfromGame(gameID, authToken);
         sessions.removeSession(session);
     }
 
 
-    public void leaveGame(String authToken, LeaveCommand leaveCommand, Session session) throws IOException {
+    public void leaveGame(String authToken, LeaveCommand leaveCommand, Session session) {
         String userName;
         try {
             userName = authDAO.getAuth(authToken).username();
@@ -190,7 +174,6 @@ public class WebsocketService {
         int gameID = leaveCommand.getGameID();
         String notificationMessage = userName + " has left the game.";
         NotificationMessage notification = new NotificationMessage(notificationMessage);
-
         try {
             if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName)) {
                 gameDAO.updatedGame(gameID, new GameData(gameID, null, gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), gameDAO.getGame(gameID).game()));
@@ -200,7 +183,6 @@ public class WebsocketService {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
         try {
             handlegameAction(authToken, gameID, userName, notification, session);
         } catch (DataAccessException e) {
@@ -218,7 +200,6 @@ public class WebsocketService {
         }
         int gameID = resignCommand.getGameID();
         ChessGame game = gameDAO.getGame(gameID).game();
-
         if(game.getTeamTurn() == null) {
             sessions.sendMessage(gameID, new ErrorMessage("Game already over."), authToken);
             return;
@@ -227,14 +208,12 @@ public class WebsocketService {
         gameDAO.updatedGame(gameID, new GameData(gameID, gameDAO.getGame(gameID).whiteUsername(), gameDAO.getGame(gameID).blackUsername(), gameDAO.getGame(gameID).gameName(), game));
         String notificationMessage = userName + " has given up.";
         NotificationMessage notification = new NotificationMessage(notificationMessage);
-        NotificationMessage notification1 = new NotificationMessage("You have given up");
-
+        NotificationMessage notificationMessage1 = new NotificationMessage("You have given up");
         // 🫸🔴🔵🫷🤌🫴☰🟣 Hollow Purple
         try {
             if (Objects.equals(gameDAO.getGame(gameID).whiteUsername(), userName) || Objects.equals(gameDAO.getGame(gameID).blackUsername(), userName)) {
-                sessions.sendMessage(gameID, notification1, authToken);
+                sessions.sendMessage(gameID, notificationMessage1, authToken);
                 handlegameAction(authToken, gameID, userName, notification, session);
-
             } else {
                 sessions.sendMessage(gameID, new ErrorMessage("Cannot resign as an Observer."), authToken);
             }

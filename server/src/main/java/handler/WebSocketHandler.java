@@ -22,18 +22,20 @@ public class WebSocketHandler {
         if (gameCommand.getCommandType() == UserGameCommand.CommandType.JOIN_PLAYER) {
             JoinPlayerCommand joinPlayerCommand = gson.fromJson(message, JoinPlayerCommand.class);
             websocketService.joinPlayer(gameCommand.getAuthString(), joinPlayerCommand, session);
-        } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
+        }
+        else if (gameCommand.getCommandType() == UserGameCommand.CommandType.JOIN_OBSERVER) {
             JoinObserverCommand joinObserverCommand = gson.fromJson(message, JoinObserverCommand.class);
             websocketService.joinObserver(gameCommand.getAuthString(), joinObserverCommand, session);
-
-        } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
+        }
+        else if (gameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
             MakeMoveCommand makeMoveCommand = gson.fromJson(message, MakeMoveCommand.class);
             websocketService.makeMove(gameCommand.getAuthString(), makeMoveCommand, session);
-
-        } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
+        }
+        else if (gameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
             LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
             websocketService.leaveGame(gameCommand.getAuthString(), leaveCommand, session);
-        } else if (gameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
+        }
+        else if (gameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
             try {
                 websocketService.resignGame(gameCommand.getAuthString(), resignCommand, session);
@@ -42,6 +44,5 @@ public class WebSocketHandler {
             }
         }
     }
-
 }
 

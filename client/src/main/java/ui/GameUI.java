@@ -71,15 +71,15 @@ public class GameUI implements GameHandler{
         System.out.println("6. Highlight Legal Moves");
     }
     private static void displayhelpText() {
-        System.out.println("Help - Possible commands");
-        System.out.println("Redraw - Reprint the Chess Board");
-        System.out.println("Leave - Exit Game, quit playing chess");
+        System.out.println("Help - Help commands");
+        System.out.println("Redraw - Reprint the board");
+        System.out.println("Leave - Exit Game, quit playing ");
         System.out.println("Move - Make a move if it is your turn");
-        System.out.println("Resign - Surrender the game");
-        System.out.println("Legal Moves - Enter a piece and show where it can move");
+        System.out.println("Resign - Give up");
+        System.out.println("Legal Moves - Enter a piece to show where it can move");
     }
 
-    private void redrawBoard() {
+    private void redrawBoard() { //pretty simple, just re-displays the board on command
         if (teamColor == ChessGame.TeamColor.WHITE) {
             chessboardWhite(testBoard);
         } else if (teamColor == ChessGame.TeamColor.BLACK) {
@@ -92,17 +92,15 @@ public class GameUI implements GameHandler{
         sockets.leave(gameID, authToken);
         System.out.println("You are alone now.");
     }
-    private void makeMove(ChessBoard board) {
+    private void makeMove(ChessBoard board) { //it works but it doesn't
         if (teamColor == null) {
-            System.out.println("Cannot make move as observer");
+            System.out.println("Cannot move as observer");
             return;
         }
-
         if (game.getTeamTurn() == null) {
-            System.out.println("Cannot make move, game is over.");
+            System.out.println("Cannot move, game is over.");
             return;
         }
-
         System.out.println("Enter Column: ");
         String column = scanner.nextLine().toLowerCase();
         int colVal;
@@ -126,91 +124,80 @@ public class GameUI implements GameHandler{
             System.out.println("Invalid column input.");
             return;
         }
-
         System.out.println("Enter Row: ");
         String row = scanner.nextLine().toLowerCase();
         int rowVal = Integer.parseInt(row);
-
         ChessPiece piece = board.getPiece(new ChessPosition(rowVal, colVal));
-
         if (piece == null) {
-            System.out.println("No piece on that square");
+            System.out.println("There's no piece there");
             return;
         }
-
         if (rowVal < 1 || rowVal > 8) {
             System.out.println("Incorrect input on the board");
             return;
         }
-
-        System.out.println("Enter Column Where You Want To Move: ");
+        System.out.println("Enter the column where you want to move: ");
         column = scanner.nextLine().toLowerCase();
-        int newColVal; //switch to avoid the gay ass no duplicated code rule
+        int colVal1; //switch to avoid the stupid no duplicated code rule
         switch (column) {
             case "a":
-                newColVal = 1;
+                colVal1 = 1;
                 break;
             case "b":
-                newColVal = 2;
+                colVal1 = 2;
                 break;
             case "c":
-                newColVal = 3;
+                colVal1 = 3;
                 break;
             case "d":
-                newColVal = 4;
+                colVal1 = 4;
                 break;
             case "e":
-                newColVal = 5;
+                colVal1 = 5;
                 break;
             case "f":
-                newColVal = 6;
+                colVal1 = 6;
                 break;
             case "g":
-                newColVal = 7;
+                colVal1 = 7;
                 break;
             case "h":
-                newColVal = 8;
+                colVal1 = 8;
                 break;
             default:
                 System.out.println("Invalid column input.");
                 return;
         }
-
         System.out.println("Enter Row Where You Want To Move: ");
         row = scanner.nextLine().toLowerCase();
-        int newRowVal = Integer.parseInt(row);
-
-        if (newRowVal < 1 || newRowVal > 8) {
+        int rowVal1 = Integer.parseInt(row);
+        if (rowVal1 < 1 || rowVal1 > 8) {
             System.out.println("Incorrect input on the board");
             return;
         }
-
-        ChessMove newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), null);
+        ChessMove newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(rowVal1, colVal1), null);
         Collection<ChessMove> validMoves = game.validMoves(new ChessPosition(rowVal, colVal));
-
         if (!validMoves.contains(newMove)) {
             System.out.println("Invalid move.");
             return;
         }
-
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if ((piece.getTeamColor() == ChessGame.TeamColor.WHITE && newRowVal == 8) || (piece.getTeamColor() == ChessGame.TeamColor.BLACK && newRowVal == 1)) {
+            if ((piece.getTeamColor() == ChessGame.TeamColor.WHITE && rowVal1 == 8) || (piece.getTeamColor() == ChessGame.TeamColor.BLACK && rowVal1 == 1)) {
                 System.out.println("Enter what piece you would like to promote to. (q, k, b, r)");
                 String newPiece = scanner.nextLine().toLowerCase();
                 if ("q".equals(newPiece)) {
-                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.QUEEN);
+                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(rowVal1, colVal1), ChessPiece.PieceType.QUEEN);
                 } else if ("k".equals(newPiece)) {
-                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.KNIGHT);
+                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(rowVal1, colVal1), ChessPiece.PieceType.KNIGHT);
                 } else if ("b".equals(newPiece)) {
-                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.BISHOP);
+                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(rowVal1, colVal1), ChessPiece.PieceType.BISHOP);
                 } else if ("r".equals(newPiece)) {
-                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(newRowVal, newColVal), ChessPiece.PieceType.ROOK);
+                    newMove = new ChessMove(new ChessPosition(rowVal, colVal), new ChessPosition(rowVal1, colVal1), ChessPiece.PieceType.ROOK);
                 } else {
                     System.out.println("Not Valid.");
                 }
             }
         }
-
         sockets.makeMove(gameID, newMove, authToken);
     }
     private void resign() {
@@ -223,7 +210,7 @@ public class GameUI implements GameHandler{
         } else if ("n".equals(answer)) {
             System.out.println("Continuing with the game.");
         } else {
-            System.out.println("Invalid input. Please enter 'Y' or 'N'.");
+            System.out.println("Invalid input please enter 'Y' or 'N'.");
         }
     }
     private void displaylegalMoves(ChessBoard board) {
@@ -243,10 +230,7 @@ public class GameUI implements GameHandler{
             System.out.println("No piece on the board");
             return;
         }
-
         Collection<ChessMove> validMoves = game.validMoves(position);
-
-
         if (validMoves.isEmpty()) {
             System.out.println("No legal moves available for this piece.");
         } else {
@@ -270,7 +254,6 @@ public class GameUI implements GameHandler{
                         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     }
                     ChessPiece currPiece = board.getPiece(currentPosition);
-
                     String textColor;
                     if (currPiece == null) {
                         textColor = "";
@@ -312,7 +295,7 @@ public class GameUI implements GameHandler{
         System.out.println("  h  g  f  e  d  c  b  a ");
         for (int rank = 1; rank <= 8; rank++) {
             System.out.print(rank + " ");
-            for (int file = 8; file >= 1; file--) {
+            for (int file = 8; file >= 1; file--) { //rank and file used to avoid a duplication notification
                 ChessPiece piece = board.getPiece(new ChessPosition(rank, file));
                 String textColor = (piece != null && piece.getTeamColor() == ChessGame.TeamColor.BLACK) ?
                         EscapeSequences.SET_TEXT_COLOR_BLUE :
@@ -355,7 +338,6 @@ public class GameUI implements GameHandler{
         System.out.println("   a  b  c  d  e  f  g  h ");
         for (int i = 8; i >= 1; i--) {
             System.out.print(i + " ");
-
             for (int j = 1; j <= 8; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i, j));
                 String textColor;

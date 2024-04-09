@@ -61,7 +61,6 @@ public class ChessClientUI {
         String username = scanner.nextLine().trim();
         System.out.print("Password: ");
         String password = scanner.nextLine().trim();
-
         //i need to eventually build the facade in the other file, but for now I'll just string some spaghetti code together
         String logingoodEnding = facade.login(username, password);
         if(logingoodEnding != null) {
@@ -79,7 +78,6 @@ public class ChessClientUI {
         String password = scanner.nextLine().trim();
         System.out.print("Email: ");
         String email = scanner.nextLine().trim();
-
         ///more spaghetti code, ill just keep doing this and cover everything in the pregame md
         String registergoodEnding = facade.register(username, password, email);
         if(registergoodEnding!=null) {
@@ -98,9 +96,7 @@ public class ChessClientUI {
         System.out.println("4. List Games");
         System.out.println("5. Join Game");
         System.out.println("6. Join Observer");
-
         boolean loggedIn = true;
-
         while (loggedIn) {
             System.out.println();
             System.out.print(LOGGED_IN_MESSAGE);
@@ -168,7 +164,6 @@ public class ChessClientUI {
         } else {
             teamColor = ChessGame.TeamColor.BLACK;
         }
-
         if (facade.joinGame(gameDigits, playerColor, authToken)) {
             gameUI = new GameUI(teamColor, authToken, facade.farumAzula.get(gameDigits));
             gameUI.run();
@@ -183,6 +178,4 @@ public class ChessClientUI {
             gameUI.run();
         }
     }
-
-
 }

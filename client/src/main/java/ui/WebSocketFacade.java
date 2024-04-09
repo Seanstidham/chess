@@ -25,7 +25,7 @@ public class WebSocketFacade extends Endpoint{
             this.session = socketContainer.connectToServer(this, websocketURI);
             initmessageHandler();
         } catch (URISyntaxException | DeploymentException | IOException e) {
-            handleWebSocketException(e);
+            handlewebsocketException(e);
         }
     }
 
@@ -41,7 +41,6 @@ public class WebSocketFacade extends Endpoint{
     private void handleMessage(String message) {
         Gson gson = new Gson();
         ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
-
         switch (serverMessage.getServerMessageType()) {
             case NOTIFICATION:
                 NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
@@ -102,7 +101,6 @@ public class WebSocketFacade extends Endpoint{
     }
 
     private void handlewebsocketException(Exception e) {
-
         e.printStackTrace();
     }
 }
