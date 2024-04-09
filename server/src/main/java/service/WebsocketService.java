@@ -153,7 +153,7 @@ public class WebsocketService {
         }
     }
     public void handlegameAction(String authToken, int gameID, String userName, NotificationMessage notification, Session session) throws DataAccessException {
-        sessions.addsessiontoGame(gameID, authToken, session);
+        sessions.addsessiontoGame(gameID, authToken, session); //userNem appears unused, but it isn't as its necessary to call the handle gameAction function
         if (!isValidAuthToken(authToken)) {
             sessions.sendMessage(gameID, new ErrorMessage("Error: Unauthorized"), authToken);
             return;
