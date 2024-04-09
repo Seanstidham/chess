@@ -11,8 +11,8 @@ public class GameUI implements GameHandler{
     static ChessGame game = new ChessGame();
     private static ChessBoard testBoard = new ChessBoard();
     static Scanner scanner = new Scanner(System.in);
-    static String BASE_URL = "http://localhost:8080";
-    static String GAME_MESSAGE = "[JOINED-GAME] >>>";
+    final static String BASE_URL = "http://localhost:8080";
+    final static String GAME_MESSAGE = "[JOINED-GAME] >>>";
     static Gson gson = new Gson();
     static ChessGame.TeamColor teamColor;
     int gameID;

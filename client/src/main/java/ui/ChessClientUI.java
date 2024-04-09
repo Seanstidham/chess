@@ -7,8 +7,8 @@ import com.google.gson.Gson;
 public class ChessClientUI {
     //okay so imma setup prelogin first
     private static Scanner scanner = new Scanner(System.in);
-    private static String LOGGED_IN_MESSAGE = "[LOGGED-IN] >>> ";
-    private static String LOGGED_OUT_MESSAGE = "[LOGGED-OUT] >>> ";
+    private final static String LOGGED_IN_MESSAGE = "[LOGGED-IN] >>> ";
+    private final static String LOGGED_OUT_MESSAGE = "[LOGGED-OUT] >>> ";
     private static boolean isloggedIn = false;
     private static ServerFacade facade = new ServerFacade(8080);
     //okay now I should have everything

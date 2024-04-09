@@ -11,7 +11,7 @@ public class ServerFacade {
     //okay first the imports
     //for list, join, and join observ imma need a way to store the stuff and the only way ik how to do that is with Hashmaps
     public Map<Integer, Integer> farumAzula; //sorry been playing a lot of Elden Ring lately
-    private static String BASE_URL = "http://localhost:";
+    private final static String BASE_URL = "http://localhost:";
     private int serverPort;
     public ServerFacade(int serverPort) {
         this.farumAzula = new HashMap<>();

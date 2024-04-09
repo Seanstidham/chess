@@ -30,14 +30,15 @@ public class SQLGameDAO implements GameDAO {
     }
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
+
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String query : CREATE_GAMES_TABLE_QUERY) {
-                try (PreparedStatement magicConch = conn.prepareStatement(query)) {
-                    magicConch.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.executeUpdate();
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error configuring the database: " + e.getMessage());
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error configuring tables: " + ex.getMessage());
         }
     }
     private static final String[] CREATE_GAMES_TABLE_QUERY = {
